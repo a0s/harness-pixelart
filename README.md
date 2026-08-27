@@ -12,6 +12,21 @@ skill.
 
 ---
 
+## Showcase
+
+![A hand-drawn pixel-art stable, thatched roof rippling in the wind, viewed live in px studio](docs/showcase-stable-studio.png)
+
+A 64x64 stable, drawn stage by stage (silhouette → flats → shading → cleanup →
+animation) from a single reference image and a one-line brief. The roof is
+individually coursed thatch, the walls are coursed stone and grained timber
+plank by plank, and the 6-frame loop is gusts of wind rippling across the
+bundles while the loose ends sway at the ridge and eaves -- not a filter, not a
+downscaled photo, drawn the way a person would draw it. Live in `px studio`,
+mid-frame, with the filmstrip along the bottom. Source at
+`workspace/stable/stable.pxa`.
+
+---
+
 ## Why it is built this way
 
 Published experiments in having language models draw pixel art hand them
@@ -38,32 +53,67 @@ So this pipeline does not give the model a brush. It gives it three things:
 
 ---
 
-## Quick start
+## How to use this harness
 
-```bash
-px doctor                                        # check the environment
-px project workspace/knight --name knight        # brief.md, refs/, history/, out/
-cp ~/some/refs/*.png workspace/knight/refs/
+1. **Install the skill once.** Drop `.agents/skills/pixel-art` (and, if you
+   want the live viewer, `pixel-art-studio`) into a repo that Claude Code or
+   Codex reads skills from -- this repo already has them wired up via
+   `.claude/skills -> ../.agents/skills`.
 
-# then, in Claude Code or Codex:
-#   "draw me a 32x32 knight in the style of these references,
-#    with a 4-frame idle where he shifts his weight"
-```
+2. **Check the environment.**
 
-The agent studies the references, writes the brief, and works through
-silhouette → flats → shading → cleanup → animation, looking at its own work at
-every stage.
+   ```bash
+   px doctor
+   ```
 
-### Watch it happen
+   Confirms the Python version, whether Pillow is available (only needed to
+   read JPEG/WebP references), and how many bundled palettes are found.
 
-```bash
-px studio --dir workspace --open
-```
+3. **Start a project and drop in references.**
 
-Terminal on one half of the screen, browser on the other. The page re-renders on
-every save, plays the animation at its real timing, replays the build history as
-a time-lapse, shows the live craft findings, and hands over every export as a
-download.
+   ```bash
+   px project workspace/knight --name knight   # brief.md, refs/, history/, out/
+   cp ~/some/refs/*.png workspace/knight/refs/
+   ```
+
+4. **Ask for the sprite in plain language**, in Claude Code or Codex, from
+   this repo:
+
+   > "draw me a 32x32 knight in the style of these references, with a
+   > 4-frame idle where he shifts his weight"
+
+   The agent runs `px ref` on your images, writes `brief.md` from what it
+   measured (palette, value range, outline convention, hue shift -- not
+   assumptions), then works the pipeline in order: **silhouette → flats →
+   shading → cleanup → animation**. After every editing pass it renders
+   `px view` and looks at the result before touching the grid again; before
+   calling anything finished it runs `px lint --verbose` and either fixes
+   every finding or says why it kept one.
+
+5. **Watch it happen live** (optional, but the best way to review the work):
+
+   ```bash
+   px studio --dir workspace --open
+   ```
+
+   Terminal on one half of the screen, browser on the other. The page
+   re-renders on every save, plays the animation at its real per-frame
+   timing, replays the build's `history/` snapshots as a time-lapse, shows
+   the live craft findings, and hands over every export as a download --
+   that's the screenshot above.
+
+6. **Ship it.**
+
+   ```bash
+   px export workspace/knight/knight.pxa --fps 8
+   ```
+
+   Writes PNGs at 1x/2x/4x, a spritesheet with a JSON manifest, a GIF, the
+   palette as `.hex`/`.gpl`, and an Aseprite `.lua` rebuild script into
+   `workspace/knight/out/`.
+
+Everything above is one command surface, `bin/px`; `px --help` lists every
+subcommand.
 
 ---
 
@@ -142,11 +192,15 @@ Plain text: diffable, greppable, editable with any tool, readable by eye.
 
 ---
 
-## Example
+## Examples
 
-`workspace/swordsman/` is a worked example -- a 32x32 swordsman with a 4-frame
-idle (weight shift, breath, planted sword), built through the full pipeline with
-snapshots at each stage. Open it in the studio to watch the time-lapse.
+Both are worked end to end, with `history/` snapshots at every stage -- open
+either in the studio to watch the time-lapse:
+
+- `workspace/stable/` -- a 64x64 stable with coursed stone, grained timber and
+  a 6-frame thatch-in-the-wind loop (the showcase above).
+- `workspace/swordsman/` -- a 32x32 swordsman with a 4-frame idle (weight
+  shift, breath, planted sword).
 
 ---
 
