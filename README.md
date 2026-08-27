@@ -1,4 +1,4 @@
-# harness_pixelart
+# harness-pixelart
 
 A pipeline for making **real pixel art** with an AI agent -- the kind a person
 would draw, not a downscaled photo and not a picture assembled out of rectangles.
