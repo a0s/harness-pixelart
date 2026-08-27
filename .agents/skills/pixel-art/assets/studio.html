@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>pixel-art studio</title>
+<style>
+  :root{
+    --bg:#15171c; --panel:#1c1f26; --panel-2:#232733; --line:#2f3542;
+    --ink:#e6e9f0; --dim:#8d95a8; --accent:#ffc458; --good:#5ddc7e;
+    --warn:#ffb454; --err:#ff6b6b; --radius:10px;
+    --check-a:#2a2d36; --check-b:#232630;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{background:var(--bg);color:var(--ink);
+       font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  a{color:var(--accent)}
+  header{position:sticky;top:0;z-index:20;display:flex;gap:10px;align-items:center;
+         flex-wrap:wrap;padding:8px 12px;background:rgba(21,23,28,.94);
+         border-bottom:1px solid var(--line);backdrop-filter:blur(8px)}
+  h1{font-size:13px;margin:0;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+  .grow{flex:1}
+  .pill{display:inline-flex;align-items:center;gap:6px;padding:2px 8px;border-radius:999px;
+        background:var(--panel-2);border:1px solid var(--line);font-size:11px;color:var(--dim)}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--good);
+       box-shadow:0 0 8px var(--good)}
+  .dot.stale{background:var(--dim);box-shadow:none}
+  select,button,input[type=range]{font:inherit;color:var(--ink);background:var(--panel-2);
+        border:1px solid var(--line);border-radius:7px;padding:4px 8px}
+  button{cursor:pointer}
+  button:hover{border-color:var(--accent);color:var(--accent)}
+  button.on{border-color:var(--accent);color:var(--accent);background:#2b2415}
+  main{display:grid;grid-template-columns:1fr;gap:12px;padding:12px;max-width:1400px;margin:0 auto}
+  @media(min-width:1080px){main{grid-template-columns:minmax(0,1.55fr) minmax(300px,1fr)}}
+  section{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+          padding:12px;min-width:0}
+  h2{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);
+     margin:0 0 8px;font-weight:600}
+  .stage{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+  .art{position:relative;display:flex;align-items:center;justify-content:center;
+       min-height:220px;padding:16px;border-radius:8px;overflow:auto;
+       background-image:linear-gradient(45deg,var(--check-a) 25%,transparent 25%),
+        linear-gradient(-45deg,var(--check-a) 25%,transparent 25%),
+        linear-gradient(45deg,transparent 75%,var(--check-a) 75%),
+        linear-gradient(-45deg,transparent 75%,var(--check-a) 75%);
+       background-size:16px 16px;background-position:0 0,0 8px,8px -8px,-8px 0;
+       background-color:var(--check-b)}
+  .art img{image-rendering:pixelated;image-rendering:crisp-edges;display:block;
+           max-width:100%;height:auto}
+  .thumbs{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+  .thumb{border:1px solid var(--line);border-radius:6px;padding:3px;background:var(--panel-2);
+         cursor:pointer;text-align:center;min-width:44px}
+  .thumb.on{border-color:var(--accent)}
+  .thumb img{image-rendering:pixelated;display:block;width:38px;height:auto;margin:0 auto}
+  .thumb span{font-size:10px;color:var(--dim)}
+  .swatches{display:flex;flex-wrap:wrap;gap:5px}
+  .sw{display:flex;align-items:center;gap:5px;background:var(--panel-2);border:1px solid var(--line);
+      border-radius:6px;padding:3px 6px;font-size:11px}
+  .chip{width:14px;height:14px;border-radius:3px;border:1px solid #0008}
+  .chip.alpha{background-image:linear-gradient(45deg,#444 25%,transparent 25%),
+      linear-gradient(-45deg,#444 25%,transparent 25%),
+      linear-gradient(45deg,transparent 75%,#444 75%),
+      linear-gradient(-45deg,transparent 75%,#444 75%);
+      background-size:8px 8px;background-position:0 0,0 4px,4px -4px,-4px 0;background-color:#2a2a2a}
+  ul.findings{list-style:none;margin:0;padding:0;max-height:280px;overflow:auto}
+  ul.findings li{padding:6px 8px;border-left:3px solid var(--line);margin-bottom:6px;
+     background:var(--panel-2);border-radius:0 6px 6px 0}
+  li.error{border-left-color:var(--err)} li.warn{border-left-color:var(--warn)}
+  li.info{border-left-color:var(--dim)}
+  .rule{color:var(--accent);font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+  .msg{font-size:12px} .hint{font-size:11px;color:var(--dim);margin-top:3px}
+  .row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+  .dl a{display:inline-block;padding:4px 9px;border:1px solid var(--line);border-radius:7px;
+        text-decoration:none;font-size:11px;background:var(--panel-2)}
+  .dl a:hover{border-color:var(--accent)}
+  .timeline{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px}
+  .timeline figure{margin:0;flex:0 0 auto;text-align:center;cursor:pointer;
+       border:1px solid var(--line);border-radius:6px;padding:4px;background:var(--panel-2)}
+  .timeline figure.on{border-color:var(--accent)}
+  .timeline img{image-rendering:pixelated;display:block;width:56px;height:auto}
+  .timeline figcaption{font-size:9px;color:var(--dim);max-width:62px;overflow:hidden;
+       text-overflow:ellipsis;white-space:nowrap}
+  pre.brief{white-space:pre-wrap;font-size:11px;color:var(--dim);max-height:220px;overflow:auto;margin:0}
+  .meta{font-size:11px;color:var(--dim)}
+  .empty{color:var(--dim);padding:20px;text-align:center}
+  code{background:var(--panel-2);padding:1px 5px;border-radius:4px}
+</style>
+</head>
+<body>
+<header>
+  <h1>pixel&#8203;art studio</h1>
+  <select id="project"></select>
+  <span class="pill" id="size">--</span>
+  <span class="pill" id="stage">--</span>
+  <span class="grow"></span>
+  <span class="pill"><span class="dot" id="live"></span><span id="livetext">live</span></span>
+</header>
+
+<main>
+  <section>
+    <div class="stage">
+      <button id="play">&#9654; play</button>
+      <button id="prev">&#8592;</button>
+      <button id="next">&#8594;</button>
+      <span class="pill" id="frameinfo">--</span>
+      <span class="grow"></span>
+      <label class="meta">zoom</label>
+      <input type="range" id="zoom" min="1" max="24" value="10" style="width:110px">
+      <span class="pill" id="zoomv">10x</span>
+    </div>
+    <div class="stage">
+      <button data-mode="normal" class="mode on">normal</button>
+      <button data-mode="onion" class="mode">onion</button>
+      <button data-mode="value" class="mode">value</button>
+      <button data-mode="silhouette" class="mode">silhouette</button>
+      <button id="gridbtn">grid</button>
+      <span class="grow"></span>
+      <button id="replay">&#9199; replay history</button>
+    </div>
+    <div class="art" id="art"><div class="empty">waiting for a sprite&hellip;</div></div>
+    <div class="thumbs" id="thumbs"></div>
+  </section>
+
+  <section>
+    <h2>downloads</h2>
+    <div class="row dl" id="downloads"></div>
+    <h2 style="margin-top:14px">palette</h2>
+    <div class="swatches" id="palette"></div>
+    <h2 style="margin-top:14px">craft check <span id="lintcount" class="meta"></span></h2>
+    <ul class="findings" id="findings"></ul>
+    <h2 style="margin-top:14px">history</h2>
+    <div class="timeline" id="timeline"></div>
+    <h2 style="margin-top:14px">brief</h2>
+    <pre class="brief" id="brief">no brief.md in the project folder</pre>
+  </section>
+</main>
+
+<script>
+const $ = s => document.querySelector(s);
+let state = null, project = null, frame = 0, playing = false, mode = "normal";
+let grid = false, zoom = 10, timer = null, replayTimer = null, version = 0;
+
+function url(path, params){
+  const q = new URLSearchParams(Object.assign({v: version}, params));
+  return path + "?" + q.toString();
+}
+function currentProject(){
+  if(!state || !state.projects.length) return null;
+  return state.projects.find(p => p.key === project) || state.projects[0];
+}
+
+async function loadState(){
+  const r = await fetch("/api/state");
+  state = await r.json();
+  version = state.version;
+  const sel = $("#project");
+  const keys = state.projects.map(p => p.key);
+  if(sel.dataset.keys !== keys.join("|")){
+    sel.innerHTML = state.projects.map(p => `<option value="${escapeHtml(p.key)}">${escapeHtml(p.name)} — ${escapeHtml(p.key)}</option>`).join("");
+    sel.dataset.keys = keys.join("|");
+  }
+  const p = currentProject();
+  if(!p){ $("#art").innerHTML = '<div class="empty">no .pxa files under '+state.root+'</div>'; return; }
+  project = p.key; sel.value = p.key;
+  if(frame >= p.frames.length) frame = 0;
+  renderAll(p);
+}
+
+function renderAll(p){
+  $("#size").textContent = p.width + "×" + p.height;
+  $("#stage").textContent = p.stage ? "stage: " + p.stage : (p.error ? "parse error" : "—");
+  if(p.error){
+    $("#art").innerHTML = '<div class="empty">'+escapeHtml(p.error)+'</div>';
+  } else {
+    drawFrame(p);
+    drawThumbs(p);
+  }
+  drawPalette(p); drawFindings(p); drawTimeline(p); drawDownloads(p);
+  $("#brief").textContent = p.brief || "no brief.md in the project folder";
+}
+
+function drawFrame(p){
+  const f = p.frames[frame] || p.frames[0];
+  const img = new Image();
+  img.src = url("/render", {p:p.key, f:f.name, s:zoom, mode:mode, grid:grid?1:0});
+  img.alt = p.name + " " + f.name;
+  img.onload = () => { $("#art").replaceChildren(img); };
+  img.onerror = () => { $("#art").innerHTML = '<div class="empty">render failed — check the terminal</div>'; };
+  $("#frameinfo").textContent = (p.frames.length > 1)
+    ? `frame ${frame+1}/${p.frames.length} · ${f.name} · ${f.duration}ms`
+    : `single frame · ${f.name}`;
+}
+
+function drawThumbs(p){
+  if(p.frames.length < 2){ $("#thumbs").replaceChildren(); return; }
+  $("#thumbs").innerHTML = p.frames.map((f,i) =>
+    `<div class="thumb ${i===frame?'on':''}" data-i="${i}">
+       <img src="${url("/render",{p:p.key,f:f.name,s:2})}" alt="${f.name}">
+       <span>${i}</span></div>`).join("");
+  $("#thumbs").querySelectorAll(".thumb").forEach(t =>
+    t.onclick = () => { frame = +t.dataset.i; stop(); drawFrame(currentProject()); drawThumbs(currentProject()); });
+}
+
+function drawPalette(p){
+  $("#palette").innerHTML = (p.palette||[]).map(s =>
+    `<span class="sw"><span class="chip ${s.hex.length>7?'alpha':''}" style="background:${s.hex.length>7?'':s.hex}"></span>
+     <b>${escapeHtml(s.key)}</b> <span class="meta">${s.hex}${s.name? ' '+escapeHtml(s.name) : ''} · ${s.count}px</span></span>`).join("");
+}
+
+function drawFindings(p){
+  const f = p.findings || [];
+  const bad = f.filter(x => x.severity !== "info").length;
+  $("#lintcount").textContent = f.length ? `(${bad} to fix, ${f.length - bad} notes)` : "(clean)";
+  $("#findings").innerHTML = f.length ? f.map(x =>
+    `<li class="${x.severity}"><div class="rule">${x.rule}${x.frame? ' · '+x.frame : ''}</div>
+      <div class="msg">${escapeHtml(x.message)}</div>
+      ${x.hint? `<div class="hint">${escapeHtml(x.hint)}</div>`:''}</li>`).join("")
+    : '<li class="info"><div class="msg">nothing flagged</div></li>';
+}
+
+function drawTimeline(p){
+  const h = p.history || [];
+  $("#timeline").innerHTML = h.length ? h.map((x,i) =>
+    `<figure data-i="${i}"><img src="${x.url}?v=${version}" alt="${x.file}">
+     <figcaption>${escapeHtml(x.note || x.file)}</figcaption></figure>`).join("")
+    : '<span class="meta">no snapshots yet — run <code>px snapshot FILE --stage flats</code></span>';
+  $("#timeline").querySelectorAll("figure").forEach(fig => fig.onclick = () => {
+    const item = h[+fig.dataset.i];
+    const img = new Image(); img.src = item.url + "?v=" + version;
+    img.style.width = Math.min(90, 100) + "%";
+    $("#art").replaceChildren(img);
+    $("#timeline").querySelectorAll("figure").forEach(x => x.classList.remove("on"));
+    fig.classList.add("on");
+  });
+}
+
+function drawDownloads(p){
+  const links = [
+    ["PNG 1×", url("/download",{p:p.key,kind:"png1",f:(p.frames[frame]||{}).name})],
+    ["PNG 4×", url("/download",{p:p.key,kind:"png4",f:(p.frames[frame]||{}).name})],
+    ["PNG 8×", url("/download",{p:p.key,kind:"png8",f:(p.frames[frame]||{}).name})],
+    [".pxa source", url("/download",{p:p.key,kind:"pxa"})],
+    ["review sheet", url("/sheet",{p:p.key,f:(p.frames[frame]||{}).name})],
+  ];
+  if(p.frames.length > 1){
+    links.push(["GIF", url("/download",{p:p.key,kind:"gif",s:8})]);
+    links.push(["spritesheet", url("/download",{p:p.key,kind:"sheet"})]);
+  }
+  $("#downloads").innerHTML = links.map(([t,u]) => `<a href="${u}" download>${t}</a>`).join("");
+}
+
+function escapeHtml(s){ return String(s).replace(/[&<>"]/g, c =>
+  ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+function play(){
+  const p = currentProject(); if(!p || p.frames.length < 2) return;
+  playing = true; $("#play").textContent = "❚❚ pause"; $("#play").classList.add("on");
+  const step = () => {
+    const pp = currentProject(); if(!pp || !playing) return;
+    frame = (frame + 1) % pp.frames.length;
+    drawFrame(pp); drawThumbs(pp);
+    timer = setTimeout(step, pp.frames[frame].duration || 120);
+  };
+  timer = setTimeout(step, (p.frames[frame].duration) || 120);
+}
+function stop(){ playing = false; clearTimeout(timer); $("#play").textContent = "▶ play";
+  $("#play").classList.remove("on"); }
+
+function replayHistory(){
+  const p = currentProject(); if(!p || !p.history.length) return;
+  clearInterval(replayTimer); let i = 0;
+  replayTimer = setInterval(() => {
+    if(i >= p.history.length){ clearInterval(replayTimer); drawFrame(p); return; }
+    const img = new Image(); img.src = p.history[i].url + "?v=" + version;
+    $("#art").replaceChildren(img);
+    $("#stage").textContent = "replay: " + (p.history[i].note || p.history[i].file);
+    i++;
+  }, 650);
+}
+
+$("#project").onchange = e => { project = e.target.value; frame = 0; stop(); loadState(); };
+$("#play").onclick = () => playing ? stop() : play();
+$("#prev").onclick = () => { const p = currentProject(); if(!p) return; stop();
+  frame = (frame - 1 + p.frames.length) % p.frames.length; drawFrame(p); drawThumbs(p); };
+$("#next").onclick = () => { const p = currentProject(); if(!p) return; stop();
+  frame = (frame + 1) % p.frames.length; drawFrame(p); drawThumbs(p); };
+$("#zoom").oninput = e => { zoom = +e.target.value; $("#zoomv").textContent = zoom + "x";
+  const p = currentProject(); if(p) drawFrame(p); };
+$("#gridbtn").onclick = e => { grid = !grid; e.target.classList.toggle("on", grid);
+  const p = currentProject(); if(p) drawFrame(p); };
+$("#replay").onclick = replayHistory;
+document.querySelectorAll(".mode").forEach(b => b.onclick = () => {
+  mode = b.dataset.mode;
+  document.querySelectorAll(".mode").forEach(x => x.classList.toggle("on", x === b));
+  const p = currentProject(); if(p) drawFrame(p);
+});
+document.addEventListener("keydown", e => {
+  if(e.key === " "){ e.preventDefault(); playing ? stop() : play(); }
+  if(e.key === "ArrowRight") $("#next").click();
+  if(e.key === "ArrowLeft") $("#prev").click();
+  if(e.key === "g") $("#gridbtn").click();
+});
+
+const es = new EventSource("/api/events");
+es.addEventListener("change", () => { $("#live").classList.remove("stale"); loadState(); });
+es.onerror = () => { $("#live").classList.add("stale"); $("#livetext").textContent = "reconnecting"; };
+es.onopen = () => { $("#live").classList.remove("stale"); $("#livetext").textContent = "live"; };
+loadState();
+setInterval(() => { if(!playing && !replayTimer) loadState(); }, 4000);
+</script>
+</body>
+</html>

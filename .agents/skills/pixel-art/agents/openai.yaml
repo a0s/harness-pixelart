@@ -1,0 +1,9 @@
+# Codex-specific metadata for the Agent Skills / Agent Plugins standard.
+name: pixel-art
+short_description: Hand-crafted pixel art from references and a description.
+entrypoint: bin/px
+tags: [pixel-art, sprites, game-art, animation, palette, aseprite, lospec]
+policy:
+  network: optional      # only `px palette get lospec:<slug>` reaches the network
+  filesystem: workspace  # reads references, writes .pxa and exports
+  requires: []           # standard library only; Pillow is an optional extra
