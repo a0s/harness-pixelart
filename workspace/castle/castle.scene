@@ -1,0 +1,42 @@
+@scene
+name: castle
+view: camera
+pitch: 35.26
+yaw: 0
+unit: 4
+light: top-left
+canvas: 192x144
+outline: ink
+shadow: 2
+
+@materials
+# name    base      shadow     light
+grass     #8b9433   #6f7729    #a3ae42
+sand      #d8c188   #b39a62    #efe0b0   texture=ashlar.tex jitter=2
+green     #6b9a80   #4a7060    #8fc0a0
+moss      #55684a   #3b4d3a    #6b9a80
+timber    #cf8a45   #9a5c2c    #f0b978   texture=rafters.tex jitter=2
+
+@objects
+# type   name        at=x,y,z        size / r,h            mat
+ground   field       at=-12,-14,0    size=54,64            mat=grass
+
+cyl      tower_l     at=3,2,0        r=4    h=12           mat=sand
+cyl      tower_r     at=25,2,0       r=4    h=12           mat=sand
+
+box      wall_front  at=0,0,0        size=28,2,7           mat=sand
+box      wall_left   at=0,2,0        size=2,4,9            mat=sand
+box      wall_right  at=26,2,0       size=2,4,9            mat=sand
+box      wall_back   at=0,6,0        size=28,2,12          mat=sand
+
+gable    hall        at=2,2,6        size=24,4,8           mat=timber   ridge=x thickness=1
+
+box      par_front   at=0,0,7        size=28,2,2           mat=green
+box      par_left    at=0,2,9        size=2,4,2            mat=green
+box      par_right   at=26,2,9       size=2,4,2            mat=green
+box      par_back    at=0,6,12       size=28,2,3           mat=green
+
+cyl      ring_l      at=3,2,12       r=4.4  h=3            mat=green
+cyl      ring_r      at=25,2,12      r=4.4  h=3            mat=green
+
+box      steps       at=12,-3,0      size=4,3,1            mat=moss

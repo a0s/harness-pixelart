@@ -6,8 +6,12 @@ are advisory by design: real artwork breaks them on purpose. Read the finding,
 decide, and either fix it or write it off in the notes.
 """
 
+import os
+import math
+
 import pxa
 import anim
+import scene as scenemod
 
 SEVERITY_ORDER = {"error": 0, "warn": 1, "info": 2}
 
@@ -144,6 +148,241 @@ def _median(vals):
     s = sorted(vals)
     n = len(s)
     return s[n // 2] if n % 2 else (s[n // 2 - 1] + s[n // 2]) / 2.0
+
+
+# --------------------------------------------------------------------------
+# structure geometry helpers (massing comparison, shared by STRUCTURE_RULES)
+# --------------------------------------------------------------------------
+
+_TONE_ORDER = ["light", "base", "shadow", "dark"]
+
+
+def _tone_rank(tone):
+    """Lower is lighter. Unknown tones (a future one we don't know about yet)
+    sort last rather than crashing the comparison."""
+    try:
+        return _TONE_ORDER.index(tone)
+    except ValueError:
+        return len(_TONE_ORDER)
+
+
+def _largest_component_bbox(mask):
+    """Bounding box of the largest 8-connected True region of a boolean grid,
+    by reusing `_components` on a synthetic '#'/'.' frame."""
+    h = len(mask); w = len(mask[0]) if h else 0
+    if not w or not h:
+        return None
+    rows = ["".join("#" if mask[y][x] else "." for x in range(w)) for y in range(h)]
+    fake = pxa.Frame("mask", rows)
+    solids = [cells for ch, cells in _components(fake, diagonal=True, transparent=".")
+              if ch == "#"]
+    if not solids:
+        return None
+    largest = max(solids, key=len)
+    xs = [c[0] for c in largest]; ys = [c[1] for c in largest]
+    return (min(xs), min(ys), max(xs), max(ys))
+
+
+def _has_iso_slope(sc):
+    """True when the scene's projected screen axes include a horizontal axis
+    with a clean 2:1 (dy/dx = 0.5) slope -- the classic pixel-art isometric
+    stair, however the scene arrived at it (`view: iso`, `view: camera
+    pitch=26.57 yaw=45`, or a hand-written `axes:`)."""
+    try:
+        axes = scenemod._axes(sc)
+    except Exception:
+        return False
+    if not axes:
+        return False
+    for ax in axes[:2]:                      # X, Y -- axes[2] (Z) is vertical
+        dx, dy = ax
+        if abs(dx) < 1e-9:
+            continue
+        if abs(abs(dy / dx) - 0.5) <= 0.02:
+            return True
+    return False
+
+
+def _angle_distance(a, b):
+    d = abs(a - b) % 180.0
+    return min(d, 180.0 - d)
+
+
+def _face_screen_tangents(axes, normal):
+    """Screen-projected (e1, e2) tangent directions for a face with this
+    normal -- e1 'along' the face, e2 'down' it. Replicates scene.py's
+    `_uv_basis` (not exposed on a rendered Result) from the normal alone, via
+    the scene's own private vector helpers -- fine, since this stays inside
+    the pixel-art package and the maths is tiny and stable."""
+    e1 = scenemod._cross((0.0, 0.0, 1.0), normal)
+    if scenemod._dot(e1, e1) < 1e-9:
+        e1 = (1.0, 0.0, 0.0)
+    e1 = scenemod._normalize(e1)
+    e2 = scenemod._normalize(scenemod._cross(normal, e1))
+    if e2[2] > 1e-9:
+        e2 = (-e2[0], -e2[1], -e2[2])
+    return scenemod._proj_unit(axes, e1), scenemod._proj_unit(axes, e2)
+
+
+def _screen_angle(vec):
+    x, y = vec
+    if abs(x) < 1e-9 and abs(y) < 1e-9:
+        return None
+    return math.degrees(math.atan2(y, x)) % 180.0
+
+
+def _face_has_axis_tangent(axes, normal):
+    """True when at least one of the face's own projected tangents is itself
+    horizontal or vertical on screen -- any wall in a yaw=0 view, the front
+    face at iso. Such a face's detail is exempt from plane-drift: the face
+    genuinely has an axis-aligned direction to draw along."""
+    for vec in _face_screen_tangents(axes, normal):
+        deg = _screen_angle(vec)
+        if deg is None:
+            continue
+        if _angle_distance(deg, 0.0) <= 5.0 or _angle_distance(deg, 90.0) <= 5.0:
+            return True
+    return False
+
+
+def _ratio_desc(vec):
+    x, y = vec
+    ax, ay = abs(x), abs(y)
+    if ax < 1e-9 or ay < 1e-9:
+        return "flat"
+    if ax >= ay:
+        return "%.3g:1" % (ax / ay)
+    return "1:%.3g" % (ay / ax)
+
+
+def _interior_edge_points(frame, fid_grid, transparent_key):
+    """Midpoints of colour-boundary segments that lie *inside* a single
+    face's region -- both pixels opaque, differently keyed, and mapped to the
+    same face id. A boundary between two faces (a real geometric edge) or
+    between paint and transparency (the silhouette) is excluded; only a
+    painted detail edge that sits on one face's own plane is a candidate.
+    Each point is returned as (x, y, face_id)."""
+    w, h = frame.width, frame.height
+    t = transparent_key
+    pts = []
+    for y in range(h):
+        row = frame.rows[y]
+        for x in range(w):
+            c = row[x]
+            if x + 1 < w:
+                c2 = row[x + 1]
+                if c2 != c and t not in (c, c2):
+                    fa, fb = fid_grid[y][x], fid_grid[y][x + 1]
+                    if fa == fb and fa >= 0:
+                        pts.append((x + 0.5, y, fa))
+            if y + 1 < h:
+                c2 = frame.rows[y + 1][x]
+                if c2 != c and t not in (c, c2):
+                    fa, fb = fid_grid[y][x], fid_grid[y + 1][x]
+                    if fa == fb and fa >= 0:
+                        pts.append((x, y + 0.5, fa))
+    return pts
+
+
+def _line_fit(cluster):
+    """-> (angle_deg 0..180, length_px, straightness, start_point). straightness
+    is the minor/major eigenvalue ratio of the point spread: near 0 means the
+    points lie on a line, near 1 means they are a blob."""
+    n = len(cluster)
+    mx = sum(p[0] for p in cluster) / n
+    my = sum(p[1] for p in cluster) / n
+    sxx = sum((p[0] - mx) ** 2 for p in cluster)
+    syy = sum((p[1] - my) ** 2 for p in cluster)
+    sxy = sum((p[0] - mx) * (p[1] - my) for p in cluster)
+    theta = 0.5 * math.atan2(2 * sxy, sxx - syy)
+    common = math.sqrt(((sxx - syy) / 2.0) ** 2 + sxy ** 2)
+    mean = (sxx + syy) / 2.0
+    major, minor = mean + common, mean - common
+    straightness = (minor / major) if major > 1e-9 else 0.0
+    dxu, dyu = math.cos(theta), math.sin(theta)
+    proj = [(p[0] - mx) * dxu + (p[1] - my) * dyu for p in cluster]
+    length = max(proj) - min(proj) if proj else 0.0
+    start = min(cluster, key=lambda p: (p[0] - mx) * dxu + (p[1] - my) * dyu)
+    return math.degrees(theta) % 180.0, length, straightness, start
+
+
+def _edge_chains(pts, local_radius=3, angle_tol=20.0, group=None):
+    """Group boundary points into orientation-coherent chains -> list of
+    (points, group_value) pairs (group_value is None when `group` isn't given).
+
+    Plain spatial adjacency is not enough here: the outer silhouette of an
+    object is one connected loop, so a naive flood-fill merges every edge of
+    the building -- corners, roofline and a mistaken window line alike -- into
+    one blob with no useful angle. Instead each point first gets a local
+    orientation from a small neighbourhood (None where the neighbourhood is a
+    corner/junction and has no single direction), and two adjacent points only
+    join the same chain when their local orientations agree -- so the chain
+    breaks exactly at the corners, leaving one straight run per edge.
+
+    `group`, when given, is a parallel list of keys (e.g. a face id): two
+    points only ever join the same neighbourhood or chain when their group
+    matches, so a chain never bridges two different faces."""
+    scaled = [(int(round(px * 2)), int(round(py * 2))) for px, py in pts]
+    by_cell = {}
+    for i, c in enumerate(scaled):
+        by_cell.setdefault(c, []).append(i)
+
+    r = int(local_radius * 2)
+    orient = [None] * len(pts)
+    for i in range(len(pts)):
+        cx, cy = scaled[i]
+        nb = [pts[j] for dx in range(-r, r + 1) for dy in range(-r, r + 1)
+              for j in by_cell.get((cx + dx, cy + dy), ())
+              if group is None or group[j] == group[i]]
+        if len(nb) < 4:
+            continue
+        deg, _len, straightness, _start = _line_fit(nb)
+        if straightness <= 0.15:
+            orient[i] = deg
+
+    seen = [False] * len(pts)
+    chains = []
+    for i in range(len(pts)):
+        if seen[i] or orient[i] is None:
+            continue
+        seen[i] = True
+        stack, comp = [i], []
+        while stack:
+            k = stack.pop()
+            comp.append(k)
+            cx, cy = scaled[k]
+            for dx in (-2, -1, 0, 1, 2):
+                for dy in (-2, -1, 0, 1, 2):
+                    if dx == 0 and dy == 0:
+                        continue
+                    for j in by_cell.get((cx + dx, cy + dy), ()):
+                        if not seen[j] and orient[j] is not None \
+                                and (group is None or group[j] == group[k]) \
+                                and _angle_distance(orient[k], orient[j]) <= angle_tol:
+                            seen[j] = True
+                            stack.append(j)
+        chains.append(([pts[k] for k in comp], group[comp[0]] if group is not None else None))
+    return chains
+
+
+def _resolve_scene(doc, path):
+    """-> (Scene, scene.Result) for a painted .pxa's `scene:` meta, resolved
+    relative to the .pxa's own directory. -> 'error' when the meta is present
+    but the file is missing or fails to parse/render. -> None when there is
+    nothing to resolve (no `scene:` meta, or no `path` to resolve it against --
+    the structure rules simply do not run in that case, same as a character
+    sprite). Never raises."""
+    scene_name = doc.meta.get("scene")
+    if not scene_name or not path:
+        return None
+    scene_path = os.path.join(os.path.dirname(os.path.abspath(path)), scene_name)
+    try:
+        sc = scenemod.load(scene_path)
+        frame = doc.frame()
+        result = scenemod.render_maps(sc, width=frame.width, height=frame.height)
+    except Exception:
+        return "error"
+    return sc, result
 
 
 # --------------------------------------------------------------------------
@@ -420,7 +659,13 @@ def rule_readability(doc, frame, cfg, out):
     bb = anim.bbox(doc, frame)
     if bb:
         fill = solid / float((bb[2] - bb[0] + 1) * (bb[3] - bb[1] + 1))
-        if fill > 0.92:
+        # a structure render legitimately fills its bounding box (a full-bleed
+        # ground plane, a wall running edge to edge) -- this rule is about a
+        # character's silhouette, so it skips a doc whose `@meta` resolves
+        # against a `.scene` (a structure/scene render) or that is still at a
+        # machine-rendered stage.
+        is_structure = bool(doc.meta.get("scene")) or doc.meta.get("stage") in MACHINE_STAGES
+        if fill > 0.92 and not is_structure:
             out.append(Finding("blocky-silhouette", "warn",
                                "the shape fills %.0f%% of its bounding box -- it is close "
                                "to a rectangle and will not read as a character"
@@ -495,10 +740,288 @@ STATIC_RULES = [rule_structure, rule_orphans, rule_edge_rhythm, rule_pillow_shad
 
 
 # --------------------------------------------------------------------------
+# stage-aware severity: on a machine-rendered stage (massing/surfaces) the
+# hand-craft rules are judging a construction, not a drawing -- the "orphans"
+# are the stepped edges of the projection and the "AA" is the shading of a
+# single-pixel sliver of a face. Downgrading them to info keeps the findings
+# that actually matter (structure, palette/value) from being buried, and
+# stops the model from "fixing" the massing instead of painting over it.
+# --------------------------------------------------------------------------
+
+MACHINE_STAGES = ("massing", "surfaces")
+
+# the rule names of STATIC_RULES findings that judge hand-drawn craft, as
+# opposed to structure (form-*, iso-slope, plane-drift) or palette/value
+# rules (unused-colour, stray-colour, redundant-colour, palette-budget,
+# colour-density, flat-ramp, low-value-range, blocky-silhouette, ...), which
+# keep their normal severity at every stage.
+CRAFT_RULE_NAMES = {"orphan-pixel", "jaggies", "doubles", "pillow-shading",
+                    "banding", "outer-aa", "dither-spray"}
+
+STAGE_DOWNGRADE_PREFIX = "(massing render -- expected until you paint) "
+
+
+def stage_note(doc, strict=False):
+    """-> the one-line advisory `px lint` should print above its findings when
+    the doc is at a machine-rendered stage and the craft-rule downgrade is in
+    effect, else None."""
+    stage = doc.meta.get("stage")
+    if strict or stage not in MACHINE_STAGES:
+        return None
+    return ("stage: %s -- craft rules are advisory here; they apply once you start painting"
+           % stage)
+
+
+# --------------------------------------------------------------------------
+# structure rules -- a painted .pxa whose `@meta scene:` resolves to a .scene
+# gets these on top of STATIC_RULES. They compare the painted grid against a
+# fresh render of the massing rather than looking at the grid alone.
+# --------------------------------------------------------------------------
+
+def rule_form_value(doc, frame, sc, result, cfg, out):
+    """Every object's faces must keep the rank order the massing gave their
+    tones (light > base > shadow > dark) once painted -- texture and detail
+    are allowed to vary the value, not invert which face reads lighter."""
+    fid_grid = result.face_id
+    if not fid_grid or len(fid_grid) != frame.height or len(fid_grid[0]) != frame.width:
+        return
+    t = doc.transparent_key()
+    ink_rgba = sc.ink_rgba
+    palette = doc.palette
+    by_object = {}
+    for f in result.faces:
+        by_object.setdefault(f["object"], []).append(f)
+    hits = []
+    for obj, faces in by_object.items():
+        if len(set(f["tone"] for f in faces)) < 2:
+            continue
+        measured = []
+        for f in faces:
+            fid, (x0, y0, x1, y1) = f["id"], f["bbox"]
+            total, count = 0.0, 0
+            for y in range(y0, y1 + 1):
+                row_face, row_chars = fid_grid[y], frame.rows[y]
+                for x in range(x0, x1 + 1):
+                    if row_face[x] != fid:
+                        continue
+                    ch = row_chars[x]
+                    if ch == t:
+                        continue
+                    rgba = palette.get(ch)
+                    if rgba is None or rgba == ink_rgba:
+                        continue
+                    total += pxa.luminance(rgba)
+                    count += 1
+            if count >= 12:
+                measured.append((f, total / count, count))
+        # a pair is only compared once BOTH faces carry enough painted area to
+        # mean something -- a 17-pixel sliver inverted by a single inked
+        # keyline crease reads identically to a face genuinely textured away,
+        # so the pair-comparison floor is raised well above the per-face
+        # measurement floor above (which just decides whether a face is
+        # measured at all).
+        for i in range(len(measured)):
+            fa, meana, ca = measured[i]
+            for fb, meanb, cb in measured[i + 1:]:
+                if fa["tone"] == fb["tone"]:
+                    continue
+                if ca < 64 or cb < 64:
+                    continue
+                ra, rb = _tone_rank(fa["tone"]), _tone_rank(fb["tone"])
+                if ra < rb and meana < meanb - 0.5:
+                    hits.append((obj, fa, meana, ca, fb, meanb, cb))
+                elif rb < ra and meanb < meana - 0.5:
+                    hits.append((obj, fb, meanb, cb, fa, meana, ca))
+    if hits:
+        # the pairs that matter -- the ones backed by the most painted area --
+        # come first, instead of being buried among slivers.
+        hits.sort(key=lambda h: -min(h[3], h[6]))
+        parts, pts = [], []
+        for obj, lighter, lm, lcount, darker, dm, dcount in hits:
+            parts.append(
+                "%s: face %s (%s) %d px reads darker than face %s (%s) %d px -- %.1f vs %.1f"
+                % (obj, lighter["face"], lighter["tone"], lcount,
+                   darker["face"], darker["tone"], dcount, lm, dm))
+            bx0, by0, bx1, by1 = lighter["bbox"]
+            pts.append(((bx0 + bx1) // 2, (by0 + by1) // 2))
+        out.append(Finding(
+            "form-value", "warn",
+            "%d face pair(s) invert their massing tone order: %s" % (len(hits), "; ".join(parts[:4])),
+            frame.name, pts,
+            hint="a face's tone must stay the majority value of that face -- let texture sit "
+                 "around the tone the massing gave it, not replace it"))
+
+
+def rule_form_coverage(doc, frame, sc, result, cfg, out):
+    """The painted opaque mask must still roughly match the massing's opaque
+    mask -- holes left unpainted, or paint that has drifted outside the
+    construction, both mean the painting no longer agrees with the volumes it
+    was built from."""
+    fid_grid = result.face_id
+    if not fid_grid or len(fid_grid) != frame.height or len(fid_grid[0]) != frame.width:
+        return
+    w, h = frame.width, frame.height
+    t = doc.transparent_key()
+    painted = [[frame.rows[y][x] != t for x in range(w)] for y in range(h)]
+    massing = [[fid_grid[y][x] >= 0 for x in range(w)] for y in range(h)]
+    massing_total = sum(1 for row in massing for v in row if v)
+    painted_total = sum(1 for row in painted for v in row if v)
+
+    holes = [[massing[y][x] and not painted[y][x] for x in range(w)] for y in range(h)]
+    drift = [[painted[y][x] and not massing[y][x] for x in range(w)] for y in range(h)]
+    hole_n = sum(1 for row in holes for v in row if v)
+    drift_n = sum(1 for row in drift for v in row if v)
+
+    if massing_total and hole_n > 0.06 * massing_total:
+        bbox = _largest_component_bbox(holes)
+        loc = (" -- largest gap around %d,%d-%d,%d" % bbox) if bbox else ""
+        out.append(Finding(
+            "form-coverage", "warn",
+            "%d px of the massing were left empty%s" % (hole_n, loc), frame.name,
+            [((bbox[0] + bbox[2]) // 2, (bbox[1] + bbox[3]) // 2)] if bbox else [],
+            hint="fill a hole back to the face's base tone before adding detail, unless it is "
+                 "a deliberately framed opening (a window, a door)"))
+    if painted_total and drift_n > 0.10 * painted_total:
+        bbox = _largest_component_bbox(drift)
+        loc = (" -- largest patch around %d,%d-%d,%d" % bbox) if bbox else ""
+        out.append(Finding(
+            "form-coverage", "warn",
+            "the painting drifted %d px outside the construction%s" % (drift_n, loc), frame.name,
+            [((bbox[0] + bbox[2]) // 2, (bbox[1] + bbox[3]) // 2)] if bbox else [],
+            hint="anything outside the massing silhouette should be a deliberate addition (a "
+                 "prop, a sign) -- if it is the building itself, fix the scene and re-render "
+                 "rather than painting past the wireframe"))
+
+
+def rule_iso_slope(doc, frame, sc, result, cfg, out):
+    """On a 2:1 isometric projection (however the scene arrived at one), the
+    outer silhouette must step a clean 2 px across per 1 px down. This is the
+    single most common tell of freehand pixel art pretending to be iso."""
+    if not _has_iso_slope(sc):
+        return
+    mask = _mask(doc, frame)
+    hits = []
+    for side in ("top", "bottom", "left", "right"):
+        runs = _edge_runs(mask, side)
+        horizontal_param = side in ("top", "bottom")
+        n = len(runs)
+        i = 0
+        while i < n:
+            j, direction = i, 0
+            while j + 1 < n:
+                d = runs[j + 1][0] - runs[j][0]
+                if d == 0:
+                    break
+                dirn = 1 if d > 0 else -1
+                if direction == 0:
+                    direction = dirn
+                elif dirn != direction:
+                    break
+                j += 1
+            total_len = sum(r[2] for r in runs[i:j + 1])
+            if j > i and total_len > 6:
+                irregular = 0
+                for k in range(i, j):
+                    len_k = runs[k][2]
+                    level_delta = abs(runs[k + 1][0] - runs[k][0])
+                    clean = (len_k == 2 * level_delta) if horizontal_param \
+                            else (level_delta == 2 * len_k)
+                    if not clean:
+                        irregular += 1
+                allowed = max(1, total_len // 12)
+                if irregular > allowed:
+                    level_change = abs(runs[j][0] - runs[i][0])
+                    if level_change:
+                        ratio = (total_len / float(level_change)) if horizontal_param \
+                                else (level_change / float(total_len))
+                    else:
+                        ratio = 0.0
+                    pos, lvl = runs[i][1], runs[i][0]
+                    coord = (pos, lvl) if horizontal_param else (lvl, pos)
+                    hits.append((coord, ratio, total_len))
+            i = j + 1 if j > i else i + 1
+    if hits:
+        out.append(Finding(
+            "iso-slope", "warn",
+            "%d silhouette run(s) do not hold the isometric 2:1 diagonal (2 px across per "
+            "1 px down): %s"
+            % (len(hits), "; ".join("~%.1f:1 over %dpx at %d,%d" % (r, l, c[0], c[1])
+                                    for c, r, l in hits[:4])),
+            frame.name, [c for c, r, l in hits],
+            hint="an isometric edge steps exactly 2 px across for every 1 px down -- redraw "
+                 "the run to a clean stair rather than freehand"))
+
+
+def rule_plane_drift(doc, frame, sc, result, cfg, out):
+    """A detail edge (a window, a plank, a trim line) drawn screen-horizontal
+    or screen-vertical *inside* a face whose own projected tangents are
+    neither is drawn by habit, not by the plane it sits on: a roof slope or a
+    gable end needs its detail sheared with the plane, the way the face's own
+    geometry already is. A face that genuinely has an axis-aligned tangent
+    (any wall in a yaw=0 view, the front face at iso) is exempt entirely."""
+    fid_grid = result.face_id
+    if not fid_grid or len(fid_grid) != frame.height or len(fid_grid[0]) != frame.width:
+        return
+    t = doc.transparent_key()
+    pts = _interior_edge_points(frame, fid_grid, t)
+    if len(pts) < 8:
+        return
+    try:
+        axes = scenemod._axes(sc)
+    except Exception:
+        return
+
+    faces_by_id = dict((f["id"], f) for f in result.faces)
+    exempt_cache = {}
+
+    def is_exempt(fid):
+        if fid not in exempt_cache:
+            f = faces_by_id.get(fid)
+            exempt_cache[fid] = True if f is None else _face_has_axis_tangent(axes, f["normal"])
+        return exempt_cache[fid]
+
+    coords = [(p[0], p[1]) for p in pts]
+    group = [p[2] for p in pts]
+    candidates = []
+    for cluster, fid in _edge_chains(coords, group=group):
+        if len(cluster) < 8 or fid is None or is_exempt(fid):
+            continue
+        deg, length, straightness, start = _line_fit(cluster)
+        if length < 8 or straightness > 0.02:
+            continue
+        d_horiz, d_vert = _angle_distance(deg, 0.0), _angle_distance(deg, 90.0)
+        if min(d_horiz, d_vert) > 5.0:
+            continue
+        orientation = "horizontal" if d_horiz <= d_vert else "vertical"
+        ref_deg = 0.0 if orientation == "horizontal" else 90.0
+        f = faces_by_id[fid]
+        tangents = _face_screen_tangents(axes, f["normal"])
+        near = min(tangents, key=lambda v: _angle_distance(_screen_angle(v) or 0.0, ref_deg))
+        candidates.append((length, orientation, (int(round(start[0])), int(round(start[1]))),
+                          f, _ratio_desc(near)))
+    if candidates:
+        candidates.sort(key=lambda c: -c[0])
+        worst = candidates[:3]
+        parts = ["%s/%s: a %d px %s edge at %d,%d sits on a face whose axes run %s -- "
+                "shear the detail with the plane"
+                % (f["object"], f["face"], length, orientation, sx, sy, ratio)
+                for length, orientation, (sx, sy), f, ratio in worst]
+        out.append(Finding(
+            "plane-drift", "info", "; ".join(parts), frame.name,
+            [(sx, sy) for _l, _o, (sx, sy), _f, _r in worst],
+            hint="a window, plank or trim line on a slanted face should follow that face's own "
+                 "edge direction, not the horizontal/vertical grid -- check `px scene faces` "
+                 "for the face's slope"))
+
+
+STRUCTURE_RULES = [rule_form_value, rule_form_coverage, rule_iso_slope, rule_plane_drift]
+
+
+# --------------------------------------------------------------------------
 # entry point
 # --------------------------------------------------------------------------
 
-def run(doc, cfg=None, frames=None, animation=True):
+def run(doc, cfg=None, frames=None, animation=True, path=None, scene=True, strict=False):
     cfg = dict(cfg or {})
     out = []
     targets = [doc.frame(f) for f in frames] if frames else doc.frames
@@ -509,6 +1032,23 @@ def run(doc, cfg=None, frames=None, animation=True):
             except Exception as exc:                      # a broken rule must not block work
                 out.append(Finding("rule-crashed", "info",
                                    "%s failed: %s" % (rule.__name__, exc), f.name))
+    if scene and doc.meta.get("scene") and path:
+        resolved = _resolve_scene(doc, path)
+        if resolved == "error":
+            out.append(Finding(
+                "form-check", "info",
+                "could not check the massing: %r does not exist or failed to parse/render"
+                % doc.meta.get("scene"), None,
+                hint="re-render the scene, or fix the path in @meta scene:"))
+        elif resolved:
+            sc, result = resolved
+            for f in targets:
+                for rule in STRUCTURE_RULES:
+                    try:
+                        rule(doc, f, sc, result, cfg, out)
+                    except Exception as exc:
+                        out.append(Finding("rule-crashed", "info",
+                                           "%s failed: %s" % (rule.__name__, exc), f.name))
     if animation and len(doc.frames) > 1:
         anchor = doc.meta.get("anchor", "bottom")
         for d in anim.drift(doc, anchor=anchor):
@@ -528,6 +1068,11 @@ def run(doc, cfg=None, frames=None, animation=True):
                                    % (m["ratio"] * 100, m["from"], m["to"]), m["to"],
                                    hint="fine for a cut, jarring for a loop -- consider a "
                                         "breakdown frame in between"))
+    if not strict and doc.meta.get("stage") in MACHINE_STAGES:
+        for finding in out:
+            if finding.rule in CRAFT_RULE_NAMES:
+                finding.severity = "info"
+                finding.message = STAGE_DOWNGRADE_PREFIX + finding.message
     out.sort(key=lambda f: (SEVERITY_ORDER.get(f.severity, 3), f.rule))
     return out
 

@@ -118,6 +118,16 @@
       <span class="grow"></span>
       <button id="replay">&#9199; replay history</button>
     </div>
+    <div class="stage" id="viewrow" style="display:none">
+      <label class="meta">structure</label>
+      <button data-view="paint" class="viewmode on">paint</button>
+      <button data-view="massing" class="viewmode">massing</button>
+      <button data-view="wireframe" class="viewmode">wireframe</button>
+      <span class="grow"></span>
+      <label class="meta">wireframe opacity</label>
+      <input type="range" id="wireop" min="0" max="100" value="70" style="width:90px">
+      <span class="pill" id="wireopv">70%</span>
+    </div>
     <div class="art" id="art"><div class="empty">waiting for a sprite&hellip;</div></div>
     <div class="thumbs" id="thumbs"></div>
   </section>
@@ -140,6 +150,7 @@
 const $ = s => document.querySelector(s);
 let state = null, project = null, frame = 0, playing = false, mode = "normal";
 let grid = false, zoom = 10, timer = null, replayTimer = null, version = 0;
+let view = "paint", wireOpacity = 70;
 
 function url(path, params){
   const q = new URLSearchParams(Object.assign({v: version}, params));
@@ -157,22 +168,31 @@ async function loadState(){
   const sel = $("#project");
   const keys = state.projects.map(p => p.key);
   if(sel.dataset.keys !== keys.join("|")){
-    sel.innerHTML = state.projects.map(p => `<option value="${escapeHtml(p.key)}">${escapeHtml(p.name)} — ${escapeHtml(p.key)}</option>`).join("");
+    sel.innerHTML = state.projects.map(p => `<option value="${escapeHtml(p.key)}">${escapeHtml(p.name)}${p.kind==="scene"?" [scene]":""} — ${escapeHtml(p.key)}</option>`).join("");
     sel.dataset.keys = keys.join("|");
   }
   const p = currentProject();
-  if(!p){ $("#art").innerHTML = '<div class="empty">no .pxa files under '+state.root+'</div>'; return; }
+  if(!p){ $("#art").innerHTML = '<div class="empty">no .pxa or .scene files under '+state.root+'</div>';
+    $("#viewrow").style.display = "none"; return; }
   project = p.key; sel.value = p.key;
   if(frame >= p.frames.length) frame = 0;
   renderAll(p);
 }
 
 function renderAll(p){
-  $("#size").textContent = p.width + "×" + p.height;
-  $("#stage").textContent = p.stage ? "stage: " + p.stage : (p.error ? "parse error" : "—");
+  $("#size").textContent = (p.width && p.height) ? (p.width + "×" + p.height) : "—";
+  $("#stage").textContent = p.error ? "parse error"
+    : p.kind === "scene" ? `scene · ${p.view || "?"} · ${p.objects || 0} object(s)`
+    : p.stage ? "stage: " + p.stage : "—";
+  updateViewRow(p);
   if(p.error){
     $("#art").innerHTML = '<div class="empty">'+escapeHtml(p.error)+'</div>';
+    $("#thumbs").replaceChildren();
+  } else if(p.kind === "scene"){
+    drawSceneFrame(p);
+    $("#thumbs").replaceChildren();
   } else {
+    if(frame >= p.frames.length) frame = 0;
     drawFrame(p);
     drawThumbs(p);
   }
@@ -180,10 +200,34 @@ function renderAll(p){
   $("#brief").textContent = p.brief || "no brief.md in the project folder";
 }
 
+// the paint/massing/wireframe toggle only applies to a .pxa whose @meta
+// scene: resolves -- hidden for a character sprite, a bare scene project,
+// or a document that failed to parse.
+function updateViewRow(p){
+  const show = !p.error && p.kind === "pxa" && p.hasScene;
+  $("#viewrow").style.display = show ? "flex" : "none";
+  if(!show) view = "paint";
+}
+
+function drawSceneFrame(p){
+  const img = new Image();
+  img.src = url("/render", {p:p.key, s:zoom, grid:grid?1:0});
+  img.alt = p.name + " (scene massing)";
+  img.onload = () => { $("#art").replaceChildren(img); };
+  img.onerror = () => { $("#art").innerHTML = '<div class="empty">render failed — check the terminal</div>'; };
+  $("#frameinfo").textContent = "scene massing preview";
+}
+
 function drawFrame(p){
   const f = p.frames[frame] || p.frames[0];
   const img = new Image();
-  img.src = url("/render", {p:p.key, f:f.name, s:zoom, mode:mode, grid:grid?1:0});
+  if(view === "massing"){
+    img.src = url("/render", {p:p.key, f:f.name, s:zoom, mode:"massing", grid:grid?1:0});
+  } else if(view === "wireframe"){
+    img.src = url("/render", {p:p.key, f:f.name, s:zoom, mode:"form", op:(wireOpacity/100), grid:grid?1:0});
+  } else {
+    img.src = url("/render", {p:p.key, f:f.name, s:zoom, mode:mode, grid:grid?1:0});
+  }
   img.alt = p.name + " " + f.name;
   img.onload = () => { $("#art").replaceChildren(img); };
   img.onerror = () => { $("#art").innerHTML = '<div class="empty">render failed — check the terminal</div>'; };
@@ -236,6 +280,7 @@ function drawTimeline(p){
 }
 
 function drawDownloads(p){
+  if(p.error || !p.frames || !p.frames.length){ $("#downloads").replaceChildren(); return; }
   const links = [
     ["PNG 1×", url("/download",{p:p.key,kind:"png1",f:(p.frames[frame]||{}).name})],
     ["PNG 4×", url("/download",{p:p.key,kind:"png4",f:(p.frames[frame]||{}).name})],
@@ -295,6 +340,16 @@ document.querySelectorAll(".mode").forEach(b => b.onclick = () => {
   document.querySelectorAll(".mode").forEach(x => x.classList.toggle("on", x === b));
   const p = currentProject(); if(p) drawFrame(p);
 });
+document.querySelectorAll(".viewmode").forEach(b => b.onclick = () => {
+  view = b.dataset.view;
+  document.querySelectorAll(".viewmode").forEach(x => x.classList.toggle("on", x === b));
+  const p = currentProject(); if(p) drawFrame(p);
+});
+$("#wireop").oninput = e => {
+  wireOpacity = +e.target.value;
+  $("#wireopv").textContent = wireOpacity + "%";
+  const p = currentProject(); if(p && view === "wireframe") drawFrame(p);
+};
 document.addEventListener("keydown", e => {
   if(e.key === " "){ e.preventDefault(); playing ? stop() : play(); }
   if(e.key === "ArrowRight") $("#next").click();

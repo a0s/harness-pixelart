@@ -11,6 +11,7 @@ import os
 import json
 import time
 import threading
+import socket
 import mimetypes
 import urllib.parse
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -20,8 +21,9 @@ import render
 import anim
 import lint as lintmod
 import export as exportmod
+import scene as scenemod
 
-WATCH_EXT = (".pxa",)
+WATCH_EXT = (".pxa", ".scene")
 POLL = 0.35
 PAGE_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                          "assets", "studio.html")
@@ -69,7 +71,10 @@ class State(object):
         docs = {}
         for p in self.files():
             try:
-                docs[self.key(p)] = (p, pxa.load(p))
+                if p.endswith(".scene"):
+                    docs[self.key(p)] = (p, scenemod.load(p))
+                else:
+                    docs[self.key(p)] = (p, pxa.load(p))
             except Exception as exc:
                 docs[self.key(p)] = (p, exc)
         with self.lock:
@@ -92,16 +97,71 @@ class State(object):
             raise doc
         return path, doc
 
+    def _scene_is_owned(self, scene_path):
+        """True when a .pxa beside this scene names it in `@meta scene:`, or
+        simply shares its basename."""
+        d = os.path.dirname(scene_path)
+        base = os.path.basename(scene_path)
+        stem = os.path.splitext(base)[0]
+        try:
+            names = os.listdir(d)
+        except OSError:
+            return False
+        for n in names:
+            if not n.endswith(".pxa"):
+                continue
+            if os.path.splitext(n)[0] == stem:
+                return True
+            try:
+                with open(os.path.join(d, n), "r") as fh:
+                    head = fh.read(2048)
+            except OSError:
+                continue
+            for line in head.splitlines():
+                st = line.strip()
+                if st.startswith("scene:") and st.split(":", 1)[1].strip() == base:
+                    return True
+                if st.startswith("@frame"):
+                    break
+        return False
+
     def snapshot(self):
         projects = []
         for key in sorted(self.docs):
             path, doc = self.docs[key]
+            kind = "scene" if key.endswith(".scene") else "pxa"
             if isinstance(doc, Exception):
-                projects.append({"key": key, "name": key, "error": str(doc),
-                                 "frames": [], "palette": [], "history": [], "findings": []})
+                # a malformed .scene or .pxa must show up as a finding, not crash the
+                # server or the page -- see studio.html's findings list.
+                projects.append({
+                    "key": key, "name": key, "kind": kind, "error": str(doc),
+                    "frames": [], "palette": [], "history": self._history(path),
+                    "findings": [{"rule": "parse-error", "severity": "error", "message": str(doc),
+                                 "frame": None, "at": [], "hint": ""}],
+                })
+                continue
+            if kind == "scene":
+                # A scene that some .pxa in the same folder is built from is not a
+                # project of its own -- it is that sprite's massing, reachable
+                # through the paint/massing/wireframe toggle. Listing it twice
+                # under the same name gave two entries, one of them empty.
+                if self._scene_is_owned(path):
+                    continue
+                projects.append({
+                    "key": key,
+                    "name": (doc.name or os.path.splitext(os.path.basename(path))[0]) + " (scene)",
+                    "path": path,
+                    "kind": "scene",
+                    "view": doc.view,
+                    "objects": len(doc.objects),
+                    "frames": [], "palette": [],
+                    "history": self._history(path),
+                    "findings": [],
+                    "brief": self._brief(path),
+                })
                 continue
             try:
-                findings = [f.as_dict() for f in lintmod.run(doc)]
+                findings = [f.as_dict() for f in lintmod.run(doc, path=path, scene=True)]
             except Exception as exc:
                 findings = [{"rule": "lint-crashed", "severity": "info", "message": str(exc),
                              "frame": None, "at": [], "hint": ""}]
@@ -111,6 +171,8 @@ class State(object):
                 "key": key,
                 "name": doc.meta.get("name", os.path.splitext(os.path.basename(path))[0]),
                 "path": path,
+                "kind": "pxa",
+                "hasScene": bool(doc.meta.get("scene")),
                 "meta": doc.meta,
                 "width": doc.width,
                 "height": doc.height,
@@ -278,8 +340,27 @@ class Handler(BaseHTTPRequestHandler):
         frame = q.get("f", [""])[0] or None
         scale = max(1, min(32, int(q.get("s", ["1"])[0])))
         mode = q.get("mode", ["normal"])[0]
+        if isinstance(doc, scenemod.Scene):
+            # a bare .scene project (no .pxa yet) -- always its own flat massing
+            result = scenemod.render_maps(doc)
+            img = render.render_frame(result.doc, result.doc.frame(), scale,
+                                      checker=max(1, scale // 2))
+            if q.get("grid", ["0"])[0] == "1" and scale >= 3:
+                render.draw_grid(img, scale, major=8)
+            return self._send(200, self._png_bytes(img), "image/png")
         fr = doc.frame(frame)
-        if mode == "onion":
+        if mode in ("massing", "form"):
+            resolved = render.scene_for(doc, fr, path)
+            if not resolved:
+                return self._send(404, json.dumps({"error": "no resolvable @meta scene: on this sprite"}))
+            sc, result = resolved
+            if mode == "massing":
+                img = render.render_frame(result.doc, result.doc.frame(), scale,
+                                          checker=max(1, scale // 2))
+            else:
+                opacity = max(0.0, min(1.0, float(q.get("op", ["1"])[0])))
+                img = render.wireframe_over(doc, fr, result, scale, opacity=opacity)
+        elif mode == "onion":
             base = anim.onion(doc, doc.frames.index(fr), prev=1, next=1)
             img = [[px for px in row for _ in range(scale)] for row in base]
             img = [row for row in img for _ in range(scale)]
@@ -307,7 +388,7 @@ class Handler(BaseHTTPRequestHandler):
 
     def review_sheet(self, q):
         path, doc = self.state.get(q.get("p", [""])[0])
-        img = render.review_sheet(doc, q.get("f", [""])[0] or None)
+        img = render.review_sheet(doc, q.get("f", [""])[0] or None, path=path, scene=True)
         return self._send(200, self._png_bytes(img), "image/png")
 
     def raw_file(self, q):
@@ -357,14 +438,48 @@ def _tmpdir():
     return d
 
 
+class DualStackServer(ThreadingHTTPServer):
+    """An IPv6 server that also accepts IPv4 clients on the same socket.
+
+    Browsers resolve `localhost` to ::1 on most systems now, so a v4-only
+    listener answers `127.0.0.1` and refuses `localhost`. Binding v6 with
+    IPV6_V6ONLY off answers both."""
+
+    address_family = socket.AF_INET6
+
+    def server_bind(self):
+        try:
+            self.socket.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_V6ONLY, 0)
+        except (AttributeError, OSError):
+            pass                                   # v4-mapped sockets unavailable
+        return ThreadingHTTPServer.server_bind(self)
+
+
+def _make_server(host, port):
+    """Prefer a dual-stack IPv6 listener; fall back to IPv4 when the host is a
+    literal v4 address or the platform refuses v6."""
+    if ":" in host or host in ("", "*", "any", "all", "localhost"):
+        bind = "::" if host in ("", "*", "any", "all") else ("::1" if host == "localhost" else host)
+        try:
+            return DualStackServer((bind, port), Handler), bind
+        except OSError:
+            pass
+    try:
+        return DualStackServer(("::", port), Handler), "::"
+    except OSError:
+        return ThreadingHTTPServer((host, port), Handler), host
+
+
 def serve(root, host="127.0.0.1", port=8765, open_browser=False):
     state = State(root)
     state.refresh(force=True)
     Handler.state = state
     threading.Thread(target=watcher, args=(state,), daemon=True).start()
-    httpd = ThreadingHTTPServer((host, port), Handler)
-    url = "http://%s:%d/" % (host, port)
+    httpd, bound = _make_server(host, port)
+    url = "http://localhost:%d/" % port
     print("pixel-art studio watching %s" % state.root)
+    if bound in ("::", "::1"):
+        print("listening on [%s]:%d  (IPv6 and IPv4)" % (bound, port))
     print("open %s   (ctrl-c to stop)" % url)
     print("%d sprite(s) found" % len(state.docs))
     if open_browser:

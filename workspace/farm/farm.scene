@@ -1,0 +1,46 @@
+@scene
+name: farm
+view: camera
+pitch: 26.57
+yaw: 0
+unit: 6
+light: top-left
+canvas: 184x164
+outline: ink
+shadow: 2
+
+@materials
+# name    base      shadow    light
+plaster   #ddd49f   #c3b789   #f0ebc4
+timber    #b17e4d   #8d6856   #cfa06a
+roof      #4895a7   #36718d   #6fbcc9   texture=shingle.tex  jitter=2
+straw     #c58c33   #8a5f22   #e3b95c   texture=straw.tex
+void      #1b2138   #0d1020   #2c3552
+stone     #d8cdaa   #a89a76   #f2ead0
+
+@objects
+# --- lean-to hay barn: a shed roof leaning off the house's left flank ---
+box    bay      at=11.8,10.6,0    size=8.6,7,3.4    mat=void
+box    hay      at=16.2,10.4,0    size=4.2,3.4,4.0  mat=straw
+box    postbl   at=11.5,10.4,0    size=1.8,1.8,3.9  mat=timber
+box    postbr   at=18.2,10.4,0    size=1.8,1.8,8.4  mat=timber
+shed   broof    at=11.9,11,3.5    size=11.0,8.7,4.7 mat=roof   high=+x  thickness=0.6
+
+# --- the house: gable end to the viewer, ridge running away ---
+box    house    at=19.5,0,0       size=9.7,15,7.7   mat=plaster
+gable  hroof    at=18.8,-1,7.7    size=11.4,17,5.5  mat=roof   ridge=y  thickness=0.6  gable-front=plaster
+cyl    pot      at=27.8,8,10.0    r=1.2 h=1.7       mat=stone  sides=10
+
+# --- the pen: one run across the front, one running away on the left ---
+box    fpost_a  at=0.5,-7.5,0     size=1.8,1.8,3.3  mat=timber
+box    fpost_b  at=5.2,-7.5,0     size=1.8,1.8,3.3  mat=timber
+box    fpost_c  at=9.9,-7.5,0     size=1.8,1.8,3.3  mat=timber
+box    fpost_g  at=16.7,-7.5,0    size=1.8,1.8,3.3  mat=timber
+box    fpost_d  at=0.5,-0.5,0     size=1.8,1.8,3.3  mat=timber
+box    fpost_e  at=0.5,6.5,0      size=1.8,1.8,3.3  mat=timber
+box    fpost_f  at=0.5,13.5,0     size=1.8,1.8,3.3  mat=timber
+box    frail_x  at=0.6,-7.0,1.9   size=17.9,0.8,0.9 mat=timber
+box    frail_y  at=0.7,-7.0,1.9   size=0.8,21.4,0.9 mat=timber
+
+# --- trough, in front of the rail ---
+box    trough   at=5.2,-9.6,0     size=5.6,2.8,3.5  mat=timber

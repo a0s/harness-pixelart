@@ -1,0 +1,1 @@
+Redrew all three roof planes course by course: staggered rounded slates with a dark seam beneath, a light cap on top and per-slate tone variation, replacing the procedural bands.

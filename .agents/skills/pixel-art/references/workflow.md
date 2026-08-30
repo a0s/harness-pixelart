@@ -26,14 +26,26 @@ px ref workspace/knight/refs/*.png --out workspace/knight
 Read the output and **open `ref_contact.png`**. You are looking for:
 
 - **native resolution** -- if it says `scale x8`, the reference is a 32x32 sprite
-  displayed at 256 px, and 32x32 is your canvas, not 256
+  displayed at 256 px, and 32x32 is your canvas, not 256 (when the scale was
+  recovered by the tolerant JPEG-safe pass, the line says so: `scale x2, edge-period`)
+- **projection** -- `projection: isometric 2:1 (edges: 26.6deg 14%, 153.4deg 12%, 90deg 41% ...)`
+  or similar; this is what stopped an earlier run from drawing a flat front
+  elevation when a 3/4 building was asked for -- read it before you pick `view:` in the brief
+- **subject size** -- `subject: 142x120 at native scale -> canvas >= 152x128`; your
+  canvas must never come in under this
 - **palette and ramps** -- how many colours, how they group
 - **value range** -- narrow means a soft, muted style; wide means high contrast
 - **hue shift** -- 0 degrees means flat lighten/darken; 25+ means a painterly ramp
 - **dither density** -- above ~0.05 the style uses visible dithering
 - **outline** -- whether there is a dark keyline convention
 
-Then fill in `brief.md`. Concretely, not aspirationally:
+Then fill in `brief.md`'s header block (`class`, `view`, `canvas`, `palette`,
+`light`, `outline`, `dither`) and prose sections, and run `px brief workspace/knight`.
+It is a hard gate: it fails with every problem listed (missing key, bad class,
+a canvas smaller than the reference subject, an unknown light direction) until
+the brief is real. Do not run `px new` / `px scene` before it passes.
+
+Concretely, not aspirationally:
 
 ```markdown
 ## Subject

@@ -1,7 +1,8 @@
 # harness_pixelart
 
 A pipeline for making real, hand-crafted pixel art -- from reference images and a
-description to a finished, craft-checked sprite or animation.
+description to a finished, craft-checked sprite, building or animation, in side
+view, 3/4 top-down or isometric projection.
 
 The whole thing is one skill plus one command. It works identically in Claude
 Code, Codex CLI, and anything else that reads the Agent Skills standard.
@@ -31,13 +32,21 @@ review loop are what make the output look drawn rather than generated.
 
 The short version of the contract:
 
-1. Study the references with `px ref` before choosing anything.
-2. Work in stages: silhouette, flats, shading, cleanup, animation.
-3. After every editing pass, run `px view` and **open the resulting image**.
+1. Study the references with `px ref` before choosing anything. It measures
+   the projection and the subject size, not only the palette.
+2. Fill in the brief header (class, view, canvas, palette, light) and pass
+   `px brief` before the first pixel. The canvas is never smaller than the
+   subject at the references' native scale.
+3. The class picks the pipeline. Characters and props are silhouette-first
+   (silhouette, flats, shading). Structures and scenes are **massing-first**:
+   block the volumes out in a `.scene` file, `px scene render` it in the
+   declared view, and paint on top. Never draw a building silhouette-first and
+   never compute a projected slope by hand.
+4. After every editing pass, run `px view` and **open the resulting image**.
    Work you have not looked at is a guess.
-4. Run `px lint` before calling anything finished. Address every finding or say
+5. Run `px lint` before calling anything finished. Address every finding or say
    why you kept it.
-5. For animation, run `px anim drift` after every change.
+6. For animation, run `px anim drift` after every change.
 
 ## The toolchain
 
@@ -45,7 +54,7 @@ The short version of the contract:
 `px --help` lists everything. It runs on the Python standard library alone --
 Pillow is optional and only needed to read JPEG/WebP references.
 
-## The format
+## The formats
 
 Sprites are `.pxa` files: a palette of one-character keys plus a character grid
 per frame, as plain text. You edit them with ordinary file tools. Palette keys
@@ -61,6 +70,11 @@ M #3b5dc9   cloth
 ....@@@@....
 ...@MMMM@...
 ```
+
+Structures start as `.scene` files: a projection, materials, and a list of
+boxes, roofs and cylinders in world units. `px scene render` turns one into a
+flat-shaded `.pxa` with the right slopes, face tones and projected textures;
+the sprite is then finished by hand in the grid.
 
 ## Live viewer
 

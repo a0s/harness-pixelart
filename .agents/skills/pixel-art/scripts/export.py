@@ -56,8 +56,8 @@ def spritesheet(doc, out_path, columns=None, padding=0, background=None, meta_pa
     return out_path, mp
 
 
-def gif(doc, out_path, scale=6, fps=None, loop=0, bg=None):
-    return anim.to_gif(doc, out_path, scale=scale, fps=fps, loop=loop, bg=bg)
+def gif(doc, out_path, scale=6, fps=None, loop=0, bg=None, force_fps=False):
+    return anim.to_gif(doc, out_path, scale=scale, fps=fps, loop=loop, bg=bg, force_fps=force_fps)
 
 
 def palette_files(doc, out_dir, name=None):
@@ -112,7 +112,7 @@ def aseprite_script(doc, out_path, png_dir):
     return out_path
 
 
-def bundle(doc, out_dir, scales=(1, 2, 4), fps=None, sheet=True, make_gif=None):
+def bundle(doc, out_dir, scales=(1, 2, 4), fps=None, sheet=True, make_gif=None, force_fps=False):
     if not os.path.isdir(out_dir):
         os.makedirs(out_dir)
     written = []
@@ -125,7 +125,8 @@ def bundle(doc, out_dir, scales=(1, 2, 4), fps=None, sheet=True, make_gif=None):
         written += [sp, mp]
     if (make_gif is None and animated) or make_gif:
         written.append(gif(doc, os.path.join(out_dir, "%s.gif" % doc.meta.get("name", "sprite")),
-                           scale=max(1, 192 // max(doc.width, doc.height)), fps=fps))
+                           scale=max(1, 192 // max(doc.width, doc.height)), fps=fps,
+                           force_fps=force_fps))
     written.append(aseprite_script(doc, os.path.join(out_dir, "%s.lua"
                                                      % doc.meta.get("name", "sprite")), out_dir))
     return written

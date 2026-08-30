@@ -1,0 +1,26 @@
+@scene
+name: barn-iso
+view: iso              # topdown | iso | oblique | custom | camera
+unit: 6                # screen px per world unit
+light: top-left
+outline: ink
+shadow: 2
+
+@materials
+# name   base       shadow     light      [texture=FILE]              [space]
+grass    #6a8f3c
+wall     #d7c996    #8f7a4e    #f0ddb0
+timber   #7a4e22    #4a2f14    #a9784a
+roof     #4d94a7    #2f6b86    #7fc0d0    texture=../textures/shingles.tex
+stone    #8f8f8f    #5c5c5c    #bcbcbc    texture=../textures/bricks.tex
+
+@objects
+# type   name      at=x,y,z         size=sx,sy,sz    mat=NAME   extras
+ground   yard      at=-8,-3,0       size=27,13       mat=grass
+box      body      at=0,0,0         size=8,8,6       mat=wall
+gable    roof      at=-1,-1,6       size=10,10,4     mat=roof   ridge=y     thickness=0.6
+box      chimney   at=6,3,9         size=1,1,2       mat=stone
+box      wing      at=-6,0,0        size=6,7,4       mat=wall   top=timber
+shed     wingroof  at=-6,-0.5,4     size=6,8,2       mat=roof   high=+x     thickness=0.5
+cyl      silo      at=13,2,0        r=2 h=6          mat=stone  sides=16
+cone     cap       at=13,2,6        r=2.5 h=2        mat=roof

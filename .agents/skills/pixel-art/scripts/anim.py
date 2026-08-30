@@ -57,6 +57,25 @@ def timing(doc):
     return [int(round(1000.0 / max(0.5, fps)))] * n
 
 
+def timing_conflict(doc, fps):
+    """-> the doc's raw `timing:` values (list[int]) when `fps` is truthy and
+    they carry more than one distinct value, else None.
+
+    A GIF export takes an explicit `--fps` as an instruction to flatten the
+    animation's timing -- but doing that silently throws away a hand-tuned
+    rhythm (held holds, quick snaps) with no trace. This is the check callers
+    use to decide whether that would happen, so they can warn about it (and
+    keep the original timing) instead of overriding it without comment. A
+    uniform or absent timing has nothing to lose, so this reads None then."""
+    if not fps:
+        return None
+    raw = doc.meta.get("timing")
+    if not raw:
+        return None
+    vals = [int(v) for v in raw.replace(" ", "").split(",") if v]
+    return vals if len(set(vals)) > 1 else None
+
+
 # --------------------------------------------------------------------------
 # analysis
 # --------------------------------------------------------------------------
@@ -215,7 +234,12 @@ def onion(doc, index, prev=1, next=0, ghost=0.34, bg=(30, 32, 40, 255)):
     return img
 
 
-def to_gif(doc, path, scale=6, fps=None, loop=0, bg=None):
+def to_gif(doc, path, scale=6, fps=None, loop=0, bg=None, force_fps=False):
+    """`fps`, when given, is only honoured over an existing varied `timing:`
+    if `force_fps` is also set -- see `timing_conflict`. Callers that already
+    warned about (or don't care about) the conflict pass `force_fps=True`;
+    everyone else gets the sprite's own rhythm back instead of a silent
+    flattening."""
     keys = [s.key for s in doc.swatches]
     t = doc.transparent_key()
     order = [t] + [k for k in keys if k != t]
@@ -225,7 +249,8 @@ def to_gif(doc, path, scale=6, fps=None, loop=0, bg=None):
         c = doc.rgba(k)
         palette.append((c[0], c[1], c[2]) if k != t else (bg or (0, 0, 0)))
     grids = [[[index_of.get(ch, 0) for ch in row] for row in f.rows] for f in doc.frames]
-    if fps:
+    use_fps = fps and (force_fps or not timing_conflict(doc, fps))
+    if use_fps:
         delays = [max(2, int(round(100.0 / float(fps))))] * len(doc.frames)
     else:
         delays = [max(2, int(round(ms / 10.0))) for ms in timing(doc)]

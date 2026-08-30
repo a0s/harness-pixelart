@@ -1,0 +1,141 @@
+{
+  "references": [
+    {
+      "path": "workspace/farm/refs/sheep_farm.jpg",
+      "file_size": "536x519",
+      "pixel_scale": 2,
+      "scale_method": "edge-period",
+      "scale_confidence": 0.847,
+      "scale_hint": null,
+      "native_size": "268x259",
+      "unique_colors": 14680,
+      "palette": [
+        "#6a4f47",
+        "#7f6c65",
+        "#916b55",
+        "#f6f3f0",
+        "#b7834a",
+        "#b9a182",
+        "#dfd098",
+        "#96b4ac",
+        "#4e93a7",
+        "#141727",
+        "#455d83",
+        "#282226",
+        "#5f5560",
+        "#7f7f7f",
+        "#9d9c9e",
+        "#c0c0c0"
+      ],
+      "usage_pct": [
+        3.1,
+        1.4,
+        7.1,
+        2.5,
+        5.6,
+        2.6,
+        2.9,
+        0.5,
+        4.4,
+        8.2,
+        3.0,
+        3.4,
+        6.8,
+        22.7,
+        3.6,
+        22.2
+      ],
+      "value_range": [
+        1,
+        90
+      ],
+      "saturation": [
+        0,
+        53
+      ],
+      "ramps": [
+        [
+          "#6a4f47",
+          "#7f6c65",
+          "#916b55"
+        ],
+        [
+          "#b7834a",
+          "#b9a182",
+          "#dfd098"
+        ],
+        [
+          "#141727",
+          "#455d83"
+        ],
+        [
+          "#5f5560",
+          "#7f7f7f",
+          "#9d9c9e",
+          "#c0c0c0"
+        ]
+      ],
+      "hue_shift_deg": 12.1,
+      "dither_density": 0.0,
+      "outline": "no strong outline convention",
+      "edge_peaks": [
+        [
+          91.0,
+          0.339
+        ],
+        [
+          179.0,
+          0.205
+        ],
+        [
+          115.0,
+          0.076
+        ],
+        [
+          45.0,
+          0.071
+        ],
+        [
+          135.0,
+          0.069
+        ]
+      ],
+      "projection_guess": "axis-aligned (side view or 3/4 top-down); roof pitch ~65 deg",
+      "subject_size": "258x257",
+      "subject_bbox": [
+        7,
+        2,
+        258,
+        257
+      ],
+      "suggested_canvas": "268x259"
+    }
+  ],
+  "brief": {
+    "sources": [
+      "sheep_farm.jpg"
+    ],
+    "merged_palette": [
+      "#a4774f",
+      "#ccb88d",
+      "#497895",
+      "#1e1c26",
+      "#645253",
+      "#7f7572",
+      "#99a8a5",
+      "#dbd9d8"
+    ],
+    "hue_shift_deg": 12.1,
+    "dither_density": 0.0,
+    "value_range": [
+      1,
+      90
+    ],
+    "native_sizes": [
+      "268x259"
+    ],
+    "suggested_canvas": "268x259",
+    "minimum_canvas": "268x259",
+    "outline": "no strong outline convention"
+  }
+}

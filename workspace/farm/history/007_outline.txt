@@ -1,0 +1,1 @@
+keyline round the whole silhouette and between overlapping objects, highlight row on every top-left edge, eave and contact shadows

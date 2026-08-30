@@ -1,0 +1,1 @@
+Pulled the left half in: sheep cluster overlaps itself, the tall post and the trough; the fence post moved under the lean-to post and its rail runs into the house; the wedge between the two roofs closed to a 2 px seam.

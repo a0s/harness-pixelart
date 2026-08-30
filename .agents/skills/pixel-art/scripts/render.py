@@ -6,10 +6,13 @@ a coordinate ruler is editable. Every stage of the workflow ends by rendering a
 review sheet and actually looking at it.
 """
 
+import os
+
 import pxa
 import imaging
 import anim
 import font3x5 as f35
+import scene as scenemod
 
 BG = (34, 36, 44, 255)
 PANEL = (26, 28, 34, 255)
@@ -98,6 +101,76 @@ def silhouette_view(doc, frame, scale=1, fg=(240, 240, 245, 255)):
 
 
 # --------------------------------------------------------------------------
+# massing (pipeline B): the scene a painted .pxa was built from
+# --------------------------------------------------------------------------
+
+_WIRE_MAGENTA = (255, 40, 220, 255)
+
+
+def scene_for(doc, frame, path):
+    """-> (Scene, scene.Result) for a painted .pxa's `@meta scene:`, resolved
+    relative to the .pxa's own directory and rendered at `frame`'s canvas
+    size. -> None when there is nothing to resolve (no `scene:` meta, no
+    `path`, a missing file or a parse/render failure) -- callers just skip the
+    massing panels in that case, same as a character sprite. Never raises."""
+    scene_name = doc.meta.get("scene")
+    if not scene_name or not path:
+        return None
+    scene_path = os.path.join(os.path.dirname(os.path.abspath(path)), scene_name)
+    try:
+        sc = scenemod.load(scene_path)
+        result = scenemod.render_maps(sc, width=frame.width, height=frame.height)
+    except Exception:
+        return None
+    return sc, result
+
+
+def _blend_px(img, x, y, color, alpha):
+    h = len(img); w = len(img[0]) if h else 0
+    if not (0 <= x < w and 0 <= y < h) or alpha <= 0:
+        return
+    if alpha >= 1.0:
+        img[y][x] = color
+        return
+    b = img[y][x]
+    img[y][x] = tuple(int(round(color[i] * alpha + b[i] * (1 - alpha))) for i in range(3)) + (255,)
+
+
+def _line_blend(img, x0, y0, x1, y1, color, alpha):
+    """Bresenham, alpha-blended -- same walk as scene.py's `_line_px`, kept
+    separate here so the wireframe overlay can fade with the opacity slider
+    instead of punching an opaque line through the paint."""
+    x0i, y0i, x1i, y1i = int(round(x0)), int(round(y0)), int(round(x1)), int(round(y1))
+    dx, dy = abs(x1i - x0i), abs(y1i - y0i)
+    sx = 1 if x0i < x1i else -1
+    sy = 1 if y0i < y1i else -1
+    err = dx - dy
+    x, y = x0i, y0i
+    while True:
+        _blend_px(img, x, y, color, alpha)
+        if x == x1i and y == y1i:
+            break
+        e2 = 2 * err
+        if e2 > -dy:
+            err -= dy; x += sx
+        if e2 < dx:
+            err += dx; y += sy
+
+
+def wireframe_over(doc, frame, result, scale, opacity=1.0):
+    """The painted frame with the scene's wireframe edges drawn over it in
+    magenta -- the FORM panel of the review sheet, and the overlay mode of
+    the live studio. `opacity` (0..1) fades the wireframe into the paint."""
+    img = render_frame(doc, frame, scale, checker=max(2, scale // 2))
+    if opacity <= 0:
+        return img
+    for (x0, y0), (x1, y1) in result.edges:
+        _line_blend(img, x0 * scale, y0 * scale, x1 * scale, y1 * scale,
+                   _WIRE_MAGENTA, opacity)
+    return img
+
+
+# --------------------------------------------------------------------------
 # composition helpers
 # --------------------------------------------------------------------------
 
@@ -161,8 +234,15 @@ def palette_strip(doc, frame=None, cell=14, cols=None, width=None):
 
 
 def review_sheet(doc, frame_name=None, scale=None, target=560, grid=True,
-                 notes=None, show_value=True, show_silhouette=True):
-    """The image a model should actually look at after every editing pass."""
+                 notes=None, show_value=True, show_silhouette=True,
+                 path=None, scene=True):
+    """The image a model should actually look at after every editing pass.
+
+    When `scene` is true and the doc's `@meta scene:` resolves against `path`
+    (the .pxa's own file path -- pass it so a massing-backed sprite gets its
+    extra panels), two more side panels are appended: MASSING (the scene's
+    flat render) and FORM (the paint with the scene's wireframe over it). A
+    character sprite, or any call without `path`, renders exactly as before."""
     frame = doc.frame(frame_name)
     w, h = frame.width, frame.height
     scale = scale or max(3, min(20, target // max(w, h)))
@@ -179,6 +259,13 @@ def review_sheet(doc, frame_name=None, scale=None, target=560, grid=True,
         side_panels.append(("SILHOUETTE", silhouette_view(doc, frame, max(1, small))))
     if show_value:
         side_panels.append(("VALUE", value_view(doc, frame, max(1, small))))
+    if scene and doc.meta.get("scene") and path:
+        resolved = scene_for(doc, frame, path)
+        if resolved:
+            sc, result = resolved
+            side_panels.append(("MASSING", render_frame(result.doc, result.doc.frame(),
+                                                        max(1, small), checker=max(1, small // 2))))
+            side_panels.append(("FORM", wireframe_over(doc, frame, result, max(1, small))))
 
     pad, top = 12, 16
     ruler_x, ruler_y = 16, 12

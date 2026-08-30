@@ -1,0 +1,1 @@
+Cleanup: single-pixel islands absorbed across the revised areas, roof tones brought to the reference's measured ramp distribution.

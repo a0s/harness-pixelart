@@ -1,0 +1,1 @@
+Grain and knots on the lean-to posts so they stop reading as extruded rectangles; last single-pixel islands absorbed.

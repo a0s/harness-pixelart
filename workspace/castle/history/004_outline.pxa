@@ -1,0 +1,184 @@
+@meta
+name: castle
+size: 192x144
+stage: features
+light: top-left
+scene: castle.scene
+view: camera k=0.5 unit=4.0 origin=36,102
+
+@palette
+. #00000000 transparent
+@ #241c1f   ink
+% #5b341d   timber-dark
+& #2b443d   green-dark
+8 #535a1f   grass-dark
+B #55684a   moss
+W #43695a   green-shadow
+N #9a5c2c   timber-shadow
+H #786b52   sand-dark
+R #6f7729   grass-shadow
+E #8b9433   grass
+X #5f8f76   green
+S #cf8a45   timber
+o #b39a62   sand-shadow
+u #a3ae42   grass-light
+c #82b494   green-light
++ #d8c188   sand
+- #f0b978   timber-light
+: #efe0b0   sand-light
+' #ffe3bd   timber-bright
+` #fcf7e2   sand-bright
+g #3a2f31   ink-soft
+m #3b4d3a   moss-dark
+T #5f9e8e   portcullis
+t #2f5f55   portcullis-dark
+s #f2c894   skin
+k #c58a5a   skin-shadow
+l #a0cdb0   green-bright
+M #6f8358   moss-light
+
+@frame main
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuEuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuEuuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@@@@@@@@uuu@@@@@@@uuuu@@@@@@@uuuu@@@@@@@uuuu@@@@@@@uuuu@@@@@@@uuuu@@@@@@@uuuu@@@@@@@uuuu@@@@@@@@@uu@@@@@@@uuuu@@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuEEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@c@@@@l@uuu@c@lc@@@@uu@ccccc@uuuu@ccccc@uuuu@ccccc@uuuu@ccccc@uuuu@ccccc@uuuu@ccccc@uuuu@c@@@@cl@uu@cc@l@@@@uu@@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuEuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuu@u@@lllll@uuu@c@lcccc@uu@ccccc@uuuu@ccccc@uuuu@ccccc@uuuu@ccccc@uuuu@ccccc@uuuu@ccccc@uuuu@c@ccccl@uu@cc@lllll@u@@8uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@llllW@uuu@c@WWccc@uu@ccccc@uuuu@ccccc@uuuu@ccccc@uuuu@ccccc@uuuu@ccccc@uuuu@ccccc@uuuu@c@cccWW@uu@cc@Wllll@u@uu8Ruuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuu@uu@@WWWWW@uuu@W@WWWWW@uu@X@XWX@uuuu@XXXXX@uuuu@XXXXX@uuuu@XXXXX@uuuu@XWXXX@uuuu@XXXXW@u@uu@W@WWWWW@uu@XX@WWWWW@u@u@uRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@uu@@WWWWW@uuu@W@WWWWW@uu@X@@WX@uuuu@XXXXX@uuuu@XXWXX@uuuu@XXXXX@uuuu@XWXXX@uuuu@XXXXW@@@uu@W@WWWWW@uu@XX@WWWWW@u@u@@uRRRuuuuuuuuuuuuuuuuuuuuuuuuEEuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@l@uu@@WWWW&@@@@@@@&&WWW@uu@W@c@W@uuuu@WXXWW@uuuu@WWWWW@uuuu@WWWWX@uuuu@WWWWW@uuuu@WXXXW@W@uu@W@WWW&&@@@@@@@&WWWW@u@u@l@RRRRuuuuuuuuuuuuuuuuuuuuuuuEuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuull@uu@@&&&&&@lclll@&&&&&@uu@W@ccX@uuuu@XXXWX@uuuu@XXXXX@uuuu@XXWXX@uuuu@XXXXX@uuuu@XXXXXcc@uu@X@&&&&&@lllcl@&&&&&@u@u@lluRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@lW@uu@@&&&&-NlllllNNN&&&@@@@X@Wc@@@@@@@XXXWX@@@@@@XXXXX@@@@@@XXWXX@@@@@@XXXXX@@@@@@XXXX@cW@@@@@@&&&NNNlllclN-&&&&@@@u@Wl@RRRuuuuuuuuuuEEuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@WW@u@l@-----NWWWWWNNNNN%@WW@W@WW@@&&&&@WWWWX@&&&&@WWWWW@&&&&@WWWWW@&&&&@WWWWW@&&&&@WWXX@WW@&@Wc@%NNN%NWWWWWN-----@c@u@WW@RRRuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@WW@@ll------NWWWWWNNNNN%%ccc@@WW@cccccWcccccccccccccWccccccWcccccccccccccWccccccWcccccc@WW@@ccW%%NNNNNWWWWWN------lc@@WW@uRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@W&@llW-SSSSSNWWWWWNNN%N%%WWcc@&W@XXXXXWXXXXXXWXXXXXXWXXXXXXWXXXXXXWXXXXXXWXXXXXXWXXXXXX@W&@ccWW%%%NNNNWWWWWNSSSSS-Wcl@&W@uRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@&&-lWWSSSS%SN&&&&&NNNNN%%WWWc%&&@WWXWWXXWWWXWXXWWWWXWWWXWWWWWWWXWWXWWWWWWWWWWXXWWWWWWXW@&&%cWWW%%NNNNN&&&&&NSSSSSSWWl-&&@uRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuEEuuu@&--WWWSSSSSSN&&&&&%NNNN%%WWWW%%&@XXWXXXXXXWXXXXXXWXXXXXXWXXXXXXWXXXXXXXXXXXXXWXXXXXXWXX@&%%WWWW%%NNNNN&&&&&NSSSSS%WWW--&@uRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuEuuu@@--SWW&S%SSSSNNNNNNNNNNN%%&&WW%%%@@XWXXXXXXXXXXXXXWXXXXXXWXXXXXXWXXXXXXXXXXXXXWXXXXXXWX@@%%%WW&&%%NNNNN%NNNNNSSSSSS&WWS--@@RRuuuuuuuuuuuuuuuuEEuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuul@SSSW&&SSSSSSNNN%NNNNNNN%%&&&W%%%@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@%%%W&&&%%NNNNNNNNNNNSS%SSS&&WSSS@l8RRuuuuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuul@SSS&&-SSSSSSNNNNNNNNNNN%%%%&&%SS@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@-'%&&%%%%NN%NNNNNNNNSSSSSS-&&S%S@l8RRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuc@SSS&-SSSSSSS%NNNNNNNNNN%%%%%&%''@@-''''''''''-''''''''''-''''''''''-''''''''''-'''''''@@'-%&%%%%%NNNNNNNNNN%SSSSSSS-&SSS@c88RRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuEuuuuuuuuuuuuuuuuc@S%S-SSSSSSSSNNNNNNNN%NN%%%%%%%SS@@SSSS%SSSS%SSSS%SSSS%SSSS%SSSS%SSSS%SSSS%SSSS%SSSS%SS@@%S%%%%%%%NNNNNNNNNNNSSSSSSS%-SSS@c88RRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuEuuuuuuuuuuuuuu@c@SSSSSSSSS%SSNNNNNNNNNNN%%%%%%%SSS@@SSS%SSSS%SSSS%SSSS%SSSS%SSSS%SSSS%SSSS%SSSS%SSSS%S@@S%S%%%%%%%NNNNNNN%NNNSSSSSSSSSSSS@c@8RRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuu@c@SSS%SSSSSSSSNNNNN%NNNNN%%%%%%@NNN@@NSSS%-SSSS%-SSSS%-SSS%-SSSS%-SSS%-SSSS%-SSSSS%-SSS@@SSS@%%%%%%NNNNNNNNNNNSSSS%SSS%SSS@c@88RRRRuuuuuuuuuuuuuuuuEuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuu@c@SSS@%%%%SSSSNNNNNNN%NNN%%%%%@@NNN@@NSSS%-SSSS%-SSSS%-SSS%-SSSS%-SSS%-SSSS%-SSSSS%-SSS@@SSS@@%%%%%NNN%%NNNNNNSSSS%%%%@SSS@c@88RRRRuuuuuuuuuuuuuuuuuEuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuu@c@%SS@@@%%SSSSNN%NNN%%NNN%%%@@c@NNN@@NSSS%-SSSS%-SSSS%-SSS%-SSSS%-SSS%-SSSS%-SSSSS%-SSS@@SSS@c@@%%%NNN%%NNNNNNS%SS%%@@@SS%@c@88RRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuu@c@%%S@ll@@SSSSN%%%%%%%NN%%%@ccc@NN@@@NSSS%-SSSS%-SSSS%-SSS%-SSSS%-SSS%-SSSS%-SSSSS%-SSS@@@SS@ccc@%%N%N%%%%%%%NSSSS@@ll@%%%@c@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuu@c@@%%@lll@SSS%N%%%%%%@NNN%%@ccW@N@c@@NNNS%-SSSS%-SSSS%-SSS%-SSSS%-SSS%-SSSS%-SSSSS%-SSS@@c@S@Wcc@%%NNN@%%%%%%NSSSS@lll@%%@@c@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuu@c@l@%@ccl@SSSSN@@@@@@@NNN%%@WWW@@cc@@NNNN%-SSSS%-SSSS%-SSS%-SSSS%-SSS%-SSSS%-SSSSS%-SSS@@cc@@WWW@%%NNN@@@@@@@NSSSS@lcc@%@l@c@88RRRRRuuEuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuu@c@ll@@ccX@%SSSN@lllll@NNN%%@WWW@cc&&@NNNN%-SSSS%-SSSS%-SSS%-SSSS%-SSS%-SSSS%-SSSSS%-SSS@&&cc@WWW@%%NNN@lllll@NSSSS@Xcc@@ll@c@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuu@cccll@ccX@%%%%%@lllll@%%%%%@WWW@c&&&@NNNN%NSSSS%-SSSS%-SSN%-NNNN%-NNN%-NNSN%-NNNNN%-NNN@&&&c@WWW@%%%%%@lllll@%%%%%@Xcc@llccc@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuu@ccccl@ccX@%%%%%@XXXXX@%%%%%@WWW&&&&&@NNNN%NNNSS%-SSSS%-SSS%-SSSS%-SSS%-SSSS%-SSSSS%-SSS@&&&&&WWW@%%%%%@XXXXX@%%%%%@Xcc@lcccc@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuu@ccccccccX@%%%%%@XXXXX@%%%%@@WWW&&&&&@NNNN%NNNNS%-SSSS%-SSS%-SSSS%-SSS%-SSSS%-SSSSS%-SSS@&&&&&WWW@@%%%%@XXXXX@%%%%%@Xcccccccc@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuu@ccccccccX@@@@@@@XXXXX@@@@@c@WWW&&&&&@NNNN%NNNNN%-SSSS%-SSS%-SSSS%-SSS%-SSSS%-SSSSS%-SSS@&&&&&WWW@c@@@@@XXXXX@@@@@@@Xcccccccc@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuu@ccccccccX@lllll@XXXXX@ccccc@WWW&&&&&@NNNN%NNNNN%-SSSS%-SSS%-SSSS%-SSS%-SSSS%-SSSSS%-SSS@&&&&&WWW@ccccc@XXXXX@lllll@Xcccccccc@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuccccccccX@lllll@XXXXX@ccccWWWWW&&&&&%NNNN%NNNNN%NNSSS%-SSS%-SSSS%-SSS%-SSSS%-SSSSS%-SSS%&&&&&WWWWWcccc@XXXXX@lllll@Xcccccccc888RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuccccccccXXXXXXXXXXXXXXXWWWWWWWW&&&&&%NNNN%NNNNN%NNNSS%-SSS%-SSSS%-SSS%-SSSS%-SSSSS%-SSS%&&&&&WWWWWWWWXXXXXXXXXXXXXXXcccccccc88RRRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@cccccccXXXXXXXXXXXXXXXWWWWWWWW&&&&@%NNNN%NNNNN%NNNNS%-SSS%-SSSS%-SSS%-SSSS%-SSSSS%-SSS%@&&&&WWWWWWWWXXXXXXXXXXXXXXXccccccc@88RRRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuucccccccXXXXXXXXXXXXXXXWWWWWWWW&&&&N%%%%%%%N%%%%%%%NN%-SSS%-NNNN%-NNN%-SSNN%-NNNNN%-NNN%-&&&&WWWWWWWWXXXXXXXXXXXXXXXccccccc88RRRRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuucccccccXXXXXXXXXXXXXXXWWWWWWWW&&&&N%NNNN%NNNNN%NNNNN%NSSS%SSSSS%SSSS%SSSSS%SSSSSS%SSSS%S&&&&WWWWWWWWXXXXXXXXXXXXXXXccccccc88RRRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuEuuuuuuuuuuuuuuuuuuuu@ccccccXXXXXXXXXXXXXXXWWWWWWWW&&&@N%NNNN%NNNNN%NNNNN%NNSS%SSSSS%SSSS%SSSSS%SSSSSS%SSSS%S@&&&WWWWWWWWXXXXXXXXXXXXXXXcccccc@88RRRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@cccccXXXXXXXXXXXXXXXWWWWWWWW&&@@N%NNNN%NNNNN%NNNNN%NNNS%SSSSS%SSSS%SSSSS%SSSSSS%SSSS%S@@&&WWWWWWWWXXXXXXXXXXXXXXXccccc@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@@ccccXXXXXXXXXXXXXXXWWWWWWWW&@@@N%NNNN%NNNNN%NNNNN%NNNN%NNNNN%NNNN%NNNNN%NNNNNN%NNNN%N@@@&WWWWWWWWXXXXXXXXXXXXXXXcccc@@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@+@cccXXXXXXXXXXXXXXXWWWWWWWW@H@@N%NNNN%NNNNN%NNNNN%NNNN%NNNNN%NNNN%NNNNN%NNNNNN%NNNN%N@@+@WWWWWWWWXXXXXXXXXXXXXXXccc@H@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@++@ccXXXXXXXXXXXXXXXWWWWWWW@HH@@@@@@@@@&&&&@@@@@@@&&&&@@@@@@@&&&&@@@@@@@&&&&@@@@@@@&&&&@++@WWWWWWWXXXXXXXXXXXXXXXcc@HH@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuEEuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@+:+@@XXXXXXXXXXXXXXXWWWWW@@HHH@@@ccccc@&&&&@ccccc@&&&&@ccccc@&&&&@ccccc@&&&&@ccccc@&&&&@+:+@@WWWWWXXXXXXXXXXXXXXX@@HHH@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuEuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@+::++@@XXXXXXXXXXXXXWWW@@HHHHH@@@ccccc@&&&&@ccccc@&&&&@ccccc@&&&&@ccccc@&&&&@ccccc@&&&&@+::++@@WWWXXXXXXXXXXXXX@@HHHHH@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@``::++:@@@@@XXXXXX@@@@@HHHHHHHH&@lllll@&&&&@lllll@&&&&@lllll@&&&&@lllll@&&&&@lllll@&&&&@::``++:@@@@@XXXXXX@@@@@HHHHHHH@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@``::+:+++:::@@@@@@ooooHHHHHHH@@W@XXXXX@&&&&@XXXXX@&&&&@XXXXX@&&&&@XXXXX@&&&&@XXXXW@&&&&@@:``+:+++:::@@@@@@o++HHHHHHHHH@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@``+:+:::::++++:+oooH++++H+HHHH&W@XXXXX@&&&&@XXWXX@&&&&@XXXXX@&&&&@XXXXX@&&&&@XXXXW@&&&&@::``+::::+++++::o::o+++oHHHHHH@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@``+++::::::+::+o+++o++:ooHHH@@WW@WWWWW@&&&&@WXXWW@&&&&@WWWXW@&&&&@WWWWW@&&&&@WWWXW@&&&&@@@ooo::::::+::+o++++++:ooHHHHH@@88RRRRRuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@``+::+:::::+:::++++++++oHoHHH&WW@XXXWX@&&&&@XXXXX@&&&&@XXWXX@&&&&@XXXXX@&&&&@XWXXX@&&&&@X:o`:+:::::+:::++++o+++oHoHHHH@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@``+:::+++::+::`+:::++ooHHoooH&&&@XXXWX@@@@@@XXXXX@@@@@@XXWXX@@@@@@XXXXX@@@@@@XXXXX@@@@@@W+``::+++::+::`++++++ooHHooHHH@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@``+:::::++++++:+ooo+o+:oHooHH&XXWWcWWWWcccWWWWWccWcWWWWWWWWWccWWWcWWWWWWWWWcWWWWWWWccWWWW:``::::++++++:+ooooo+::HooHHH@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@``:++:::+:::::+o++++++++HHHoH&XXWXXXXXXWXXXXXXWXXXXXXWXXXXXXWXXXXXXWXXXXXXWXXXXXXWXXXXXXW:``+:::+:::::+o+++++++oHHHooH@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@``::++::+:::::`+o++++++oHoHoo&XXWXXXXXXWXXXXXXWXXXXXXWXXXXXXWXXXXXXXXXXXXXWXXXXXXXXXXXXXW:``++::+:::::`+o++++++oHoHooH@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@``::::+++::::::+o++++ooHooHoH&XXWWWWXWWXWXWWWWXWWWXXXWWWXXWWWWWWWXWWWWWWWWWXWXWXWWWWWWWXW+``+:+++::::::+o+++++oHooHoHH@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@``::::::::++++:+ooo++++oooHHo&XXXXXXWXXXXXXWXXXXXXWXXXXXXXXXXXXXXXXXXXXWXXXXXXXXXXXXXXXXW:``+::::+++++:::oooo++o++H+oH@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuEuuuuuuuuuuuuuuuuuuuuu@@``+++::::::+::+o++++++:ooHHoo&XXXXXXWXXXXXXWXXXXXXWXXXXXXWXXXXXXWXXXXXXWXXXXXXWXXXXXXXXXW:``+::::::::::o:::o++:ooHHooH@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuEuuuEuuuuuuuuuuuuuuuu@@``:::+:::::+:::++++++++oHoooo&XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXW:``:+:::::::::++++o+++oHooooH@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuEuuuuuuuuuuuuuuu@@``::::+++::+::`++++o+ooHHoooHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH+``::+++::+::`++++o+++HHoooHH@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@``::::::++++++:+ooooo+:oHooHoHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH:``::::++++++:+oooo:+::H::HoH@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@``:++:::+::::::o::++++++H+Hoo+oHoooooooHoooooooooooooo@@@@@@@@@HoooooooHoooHHHoHoooooooHo:``+:::+:::::+o:::::++oHHHooH@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@``::++::+:::::`:o:+++++++oHooH+o+++++++o+++++++o++++@@@c@ccccc@@@++++++o+++++++++++++++o::``++::+:::::`+o++++++oHoHooH@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@`o::o:o++::::::+o++++ooHooHoHHoooooooooooooooooooo@@@XWl@lllll&@&@@oooooooooooooooooooooH+``+:+++::::::+o+++++o+ooHoHH@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuEuuuuuuuuuuuuuuuuuuuuuuu@@``o:o::::+++++:+ooooo+++++HHo+++++:+++++++:++++++@@XXcXl@lllllW@&&@@+:::++++o+++++:+++++o:``+::::+++++:+oooo+++ooooHoH@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuEuuuuuuuuuuuuuuuuuuuuuu@@``+++::::::+::+o+++o++::::HooH++++++o+++++++o+++@@Xcc@Xl&&&@&l@WWW@&@:::++++o+++++++o+++o:``+::::::+::+o+++o++:o:HHooH@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@``+::+:::::+:::++++o+++oHooooH++++++o++++++++++@XX@ccc&ggggggg@WWWW&&@++++++o+++++++o+++o:``:+:::::+:::++++o+++o+ooooH@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@``+:::++:::+::`++++++o+HHoooHHoooooooooooooooo@@Xcc@&gggg@@@gggg&WWW&@@oooooooooooooooooH+``::+++::+::`ooooo++oHHoooHH@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuEuuuuuuuuuuuuuuuuuuu@@``+:::::++++++:+ooooo+:oHooHo++o+++++++o++++++@@ccc&gg@@@@@@@@@gg&WW@&@o+ooo+++o+++++++o::``::::++++++:ooooo++:o:ooHoH@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuEuuuuuuuuuuuuuuuuuu@@``:++:::+:::::+o++++++MoHHHmoH+o++:++++o++:++@XX@c&gg@@@@@@@@@@@gg&@W&&@++:++++o++:++++oo:``+:::+:::::ooooMMMMMMHHHooH@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@``::++::+MMMM:`+oooo++BmgoHmoH+o+++++++o+++++@Xcccgg@@@@@@@@@@@@@ggWWW&@+++++++o+++++++oo:MMMMM:+:::::`MmomBBBBBgBHBoH@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@``::+:++MMMMM::+oooo+omgmoHmHHoooooooooooooo@@Xcc&@@TTT@@TTT@@TTT@@&WW@@@oooo+oooooooooo++MMBMB++::::::Bm+BBBmmgmmgmgH@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@``+:MMMMMBBBBMMMmMmmmMBmmoHgoH++++:+o+++++:+@X@@ct@@ttt@@ttt@@ttt@@t@WW&@+:+o+++++:+o+++o:MMBMM::+++++:BmommBBBBmmggmg@@88RRRRRuuuuuuuuuuuuuuuuuuuuEuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@``++BMMMMMMBMMBBBBBmBBMmMHommg++++++mMMM++++@Xcc&t@@ttt@@ttt@@ttt@@t&WW&@+++o+++++++o+++oMMMBMM::::+::+mBMBmBBMmmggmmg@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuEuuuuuuuuuuuuu@@MMMMMBMMMMMBMMMBBBBmBBBmgoommg+++++++BBB+MMM@Xcc&@@@@@@@@@@@@@@@@@@@&WW&@+++++++++++o+++oMMMMBM::::+:MMBBBBmBBBmgmmmmg@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuEuuuEEuuuuuuu@@MMMMMMMMMMMBMMMBBBBmBmmggmmmggmmmooommmmommm@@@@@T@@TTT@@TTT@@TTT@@T@@@@@moooooommmmmmmmgBMMMMBMMMMMMMMBBBBmBBmBgmmmmg@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuEuuuuuuuu@@MMBMMMMMBBBBBBMBmmmmBBMmgmmmmgBmB+++BBBm+BBB@Xcc&t@@ttt@@ttt@@ttt@@t&WW&@BMMM++oMMMMMBBmmMMMMMMMBBBBBBMBmmmmmBMmgmmgmg@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@MMMBBMMMBMMMMMBmmMMMBBBmgggmmBBmBMMMBBBmMBMB@Xcc&t@@ttt@@ttt@@ttt@@t@@@@@BMBBMMMMMMMMBBmmMMMBMMMBMMMMMBmmBBBBBBBgggmmg@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@MMMMBBMMBMMMMMMMmMBBBBBBgmgmmBBmBBBBBBBmBBBB@Xcc&@@@@@@@@@@@@@@@@@@@&WW&@BBBBBBmBBBBBBBmmMMMMMMMMMMMMMMBmBBBBBBmgmgmmg@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuEuuuuuuuuuuuuu@@MMMMBMBBBMMMMMMMmMBBBmmgmmgmggmmmmmmmmmmmmmm@@@@@T@@TTT@@TTT@@TTT@@T&WW&@mmmmmmmmmmmmmmmgBMMMMMMMMMMMMMBmBBBBmmgmmgmgg@@88RRRRRuuuuuuuuuuuuuuuEEuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuEuuuuuuuuuuuu@@MMBMBMMMMBBBBBMBBmmmBBBmmmggmgBBBBMBmBBBBBMB@Xcc&t@@ttt@@ttt@@ttt@@t&WW&@BMBBBBBBBMBmBBBmMMMBMMMMmBBBBMBmmmmmBBmmmggmg@@88RRRRRuuuuuuuuuuuuuuuEuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@MMBBBMMMMMMBMMBmBBBmBBMmmggmBgBBBBBBmBBBBBBB@uuu&t@@ttt@@ttt@@ttt@@t@@@@@mmBmBBBBBBBmBBBmMMMBMMMMMMBMMBmBBBBBBMmmggmmg@@88RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEBMMBMMBMMMMMBMMMBBBBmBBBBBmmmmBBBBBBBBBMMMMMB@uuu&@@@@@@@@@@@@@@@@@@@&uu&@mmBmBBBBBBBmBBBmMMMMBMMMMMBMMMBBBBmBBBmgmmmmgg888RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuu@@MBMMMBBBMMBMMMBBBBmBmmggmmmggmmmmmmmmmmmmmm@@@@@T@::::::::::::::@@T&uu&@mBmBmBmmmmmmmmmgBMMMMBBBMMBMMMBBBBBBBmBgmmmg@@88RRRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuEuuuEuuuuuuuuuuuuuuuuuuuEMMBMMMMMBBBBBBMBmBBBBBMMgMmgmgBmBBBBBBBmBBBB@uuu&t@oooooooooooooo@@t&uu&@BBBBBBBBBBBBBBmmMMMMMMMBBBBBMMBBmmmmBMmgmmgmg888RRRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuu@@MBBMMMBMMMMMBmmBBBBBBmgggmBgBmBBMBBBBBBBMB@uuu&t@@@@@@@@@@@@@@@@@t@@@@@BMBBBBmBBMBBBBmMMMMBMMMBMMMMMBmBBBBBBBmBmBm@@88RRRRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEMMMBBMMBMMMMMMBmBBBBBBmgmgmmgmgmmmmmmmgmmmm@uuu&@::::::::::::::::@@&uu&@mmmmmmgmmmmmmmgmMMMBBMMBMMMMMMMMBBBBBBmgmgmm888RRRRRRuuuuuuuuuEEuuuuuuuuuuuuuuuEEuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@BMBMBBBMMMMMMBBBBBBmmgmmgg@@@@@@@@@@@@@@@@88888@oooooooooooooooo@@888@8@@@@@@@@@@@@@@@@@MMBMBBBMMMMMMMmBBBBmBgmmgg@88RRRRRRRuuuuuuuuuEuuuuuuuuuuuuuuuuEuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@BBMMMMBBBBBMBmmmBmmmmmmg@88RRRRRRRRRRRRRRRRRRR@@@@@@@@@@@@@@@@@@@88RRRRRRRRRRRRRRRRRRRR@MBMMMMBBBBBMBmmmmmBBmmmg@88RRRRRRRuuuuuuuuuEEuuuuuuuuuuuuuuuuuEEuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@BMMMMMBMMBmBBBmBBMmg@@88RRRRRRRRRRRRRRRRRRR@::::::::::::::::::@88RRRRRRRRRRRRRRRRRRRRR@@BMMMMMBMMMmBBBmBBMmg@@88RRRRRRRRuuuuuuuuuEuuuuuuuuuuuuuuuuuuEuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@BMMMMBMMMBBBBBBBBg@88RRRRRRRRRRRRRRRRRRRRR@oooooooooooooooooo@88RRRRRRRRRRRRRRRRRRRRRRR@BMMMMBMMMBBBBmBBBg@88RRRRRRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@@BBmMMMBBBmgm@@@88RRRRRRRRRuuuuuuuuuuuuu@@@@@@@@@@@@@@@@@@@@88RRRRRuuuuuuuuuuuuuuuuuuu@@@BBBMMMBBBmgm@@@88RRRRRRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@@@@BB@@@@@88RRRRRRRRRRRuuuuuuuuuuuuu@::::::::::::::::::::@8RRRRRuuuuuuuuuuuuuuuuuuuuuu@@@@@Bm@@@@@88RRRRRRRRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuRRR@@88RRRRRRRRRRRRRRuuuuuuuuuuuuuuu@oooooooooooooooooooo@8RRRRRuuuuuuuuuuuuuuuuuuuuuuuuRRR@@88RRRRRRRRRRRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuRRRRRRRRRRRRRRRRRRuuuuuuuuuuuuuuuu@@@@@@@@@@@@@@@@@@@@@@8RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuRRRRRRRRRRRRRRRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuEuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuRRRRRRRRRRRRuuuuu@@@@@@@@uuuuuu88888888888888888888888RRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuRRRRRRRRRRRRuuuuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuRRuuuuuuuu@@SSSSSSNN@@uuuRRRRRRRRRRRRRRRRRRRRRRRRRRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuRRuuuuuuuuuuuuuuuuuuuuuEuuuuuuuuuuuuuEuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@SSSSSSSSSNNN@uuuuuuuuuuuRRRRRRRRRRRRRRRRRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@SSSSSSSSSSSNNN@uuuuuuuuuuuuRRRRRRRRRRRRRRRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@SSSSSSSSSSSSSNNN@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@@@@@@@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEEuuuuuuuuuu@SSSSSSSSSSSSSNNN@uuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@NNSSSSSS@@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEEuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEuuuuuuuuuuu@SSSSSSSSSSSSNN%%@uuuuuuuuuuuuuuuuuuuuuuuuuuuu@NNNSSSSSSSSS@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@NSSSSSSSSSSNN%%%@uuuuuuuuuuuuuuuuuuuuuuuuuuu@NNNSSSSSSSSSSS@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@NSSSSSSSSSSNN%%%@uuuuuuuuuuuuuuuuuuuuuuuuuu@NNNSSSSSSSSSSSSS@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEuuu@NNSSSSSSSSNN%%%%@uuuuuuuuuuuuuuuuuuuuuuuuuu@NNNSSSSSSSSSSSSS@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuEEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEuu@N%NSSSSSSNN%%%%%@uuuuuuuuuuuuuuuuuuuuuuuuuu@%%NNSSSSSSSSSSSS@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@N%%NNSSNNN%%%%%%@uuuuuuuuuuuuuuuuuuuuuuuuuu@%%%NNSSSSSSSSSSN@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEEuuuuuuuuuuuuuuuuuuuuuuuuuu@N%%@@@@@@@@%%%%%@uuuuuuuuuuuuuuuuuuuuuuuuuu@%%%NNSSSSSSSSSSN@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuu@N%@ssssssss@%%%%@uuuuuuuuuuuuuuuuuuuuuuuuuu@%%%%NNSSSSSSSSNN@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEuuuuuuuuu@N%@ssssssss@%%%@uuuuuuuuuuuuuuuuuuuuuuuuuuu@%%%%%NNSSSSSSN%N@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEuuuuuuuu@N%@ss@ss@ss@%%%@uuuuuuuuuuuuuuuuuuEEuuuuuuu@%%%%%%NNNSSNN%%N@uuuuuuuuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuEuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@N%@ssssssss@%%@uuuuuuuuuuuuuuuuuuuEuuuuuuuu@%%%%%@@@@@@@@%%N@uuuuuuuuuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuEEuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@N%@sskkksss@%@uuuuuuuuuuuuuuuuuuuuuuuuuuuuu@%%%%@ssssssss@%N@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@N%%@ssssss@@@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@%%%@ssssssss@%N@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@%%%@@@@@@@%%@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@%%%@ss@ss@ss@%N@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@%%tttttttt%@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@%%@ssssssss@%N@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@ttTTTTTTt@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@%@ssskkkss@%N@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEEuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEuuuuuuuuuuuuuuuuu@tTTTTTTtt@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@@@ssssss@%%N@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEuuuuuuuuuuuuuuuu@ttttttttt@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@%%@@@@@@@%%%@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@g@@@@@@@g@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@%tttttttt%%@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@ss@@ss@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@tcccccctt@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu88888888888888uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@ttcccccct@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuRRRRRRRRRRRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@ttttttttt@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuRRRRRRRRRRuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@g@@@@@@@g@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu@ss@@ss@uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEuuuuuuuuuuuuuuuuuuuuuuuuuuuEEu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu88888888888888uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuEuu
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@RRRRRRRRRRRRRR@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.............................................................................................................RRRRRRRRRR.........................................................................
+................................................................................................................................................................................................

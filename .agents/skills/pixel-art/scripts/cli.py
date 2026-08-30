@@ -21,6 +21,8 @@ import render
 import anim
 import convert
 import refstudy
+import brief as briefmod
+import scene as scenemod
 import export as exportmod
 
 SKILL_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -134,11 +136,13 @@ def cmd_view(a):
     notes = a.note or []
     if a.lint:
         findings = lintmod.run(doc, {"max_colors": a.max_colors}, animation=False,
-                               frames=[a.frame] if a.frame else None)
+                               frames=[a.frame] if a.frame else None,
+                               path=a.file, scene=not a.no_scene)
         notes = notes + ["%s: %s" % (f.rule.upper(), f.message[:88])
                          for f in findings if f.severity != "info"][:6]
     img = render.review_sheet(doc, a.frame, scale=a.scale, target=a.target,
-                              grid=not a.no_grid, notes=notes)
+                              grid=not a.no_grid, notes=notes,
+                              path=a.file, scene=not a.no_scene)
     out = a.out or _sidecar(a.file, "sheet")
     pxa.write_png(out, img)
     _out(out)
@@ -168,10 +172,14 @@ def cmd_lint(a):
     if a.max_colors:
         cfg["max_colors"] = a.max_colors
     findings = lintmod.run(doc, cfg, frames=[a.frame] if a.frame else None,
-                           animation=not a.no_anim)
+                           animation=not a.no_anim, path=a.file, scene=not a.no_scene,
+                           strict=a.strict)
     if a.json:
         _out(json.dumps([f.as_dict() for f in findings], indent=2))
     else:
+        note = lintmod.stage_note(doc, strict=a.strict)
+        if note:
+            _out(note)
         _out(lintmod.format_text(findings, verbose=a.verbose))
     if a.strict and any(f.severity == "error" for f in findings):
         raise SystemExit(2)
@@ -315,12 +323,26 @@ def cmd_palette(a):
         return
 
 
+def _default_ref_out_dir(images):
+    """Where `px ref` writes when `--out` is not given: the first image's own
+    directory, same as always -- unless every input lives under a `refs/`
+    directory (the normal project layout), in which case the default is
+    `refs/`'s parent, the project root, so the study lands next to brief.md
+    instead of shadowing the project-level ref_contact.png/ref_study.json
+    that live there."""
+    dirs = [os.path.dirname(os.path.abspath(p)) for p in images]
+    if len(set(dirs)) == 1 and os.path.basename(dirs[0]) == "refs":
+        return os.path.dirname(dirs[0])
+    return dirs[0]
+
+
 def cmd_ref(a):
-    reports = [refstudy.study(p, colors=a.colors) for p in a.images]
+    reports = [refstudy.study(p, colors=a.colors, scale=a.scale) for p in a.images]
     b = refstudy.brief(reports)
-    out_dir = a.out or os.path.dirname(os.path.abspath(a.images[0]))
+    out_dir = a.out or _default_ref_out_dir(a.images)
     if not os.path.isdir(out_dir):
         os.makedirs(out_dir)
+    _out("writing to %s" % out_dir)
     sheet = refstudy.contact_sheet(reports, os.path.join(out_dir, "ref_contact.png"))
     data = {"references": [dict((k, v) for k, v in r.items() if k != "palette_rgba")
                            for r in reports],
@@ -331,11 +353,22 @@ def cmd_ref(a):
     if b["merged_palette_rgba"]:
         palettes.save_hex(b["merged_palette_rgba"], os.path.join(out_dir, "ref_palette.hex"))
     for r in reports:
-        _out("%s  native %s (scale x%d)  %d unique colours  value %d-%d  hue-shift %s deg  dither %s"
-             % (os.path.basename(r["path"]), r["native_size"], r["pixel_scale"],
+        scale_note = ("scale x%d" % r["pixel_scale"] if r["scale_method"] == "exact"
+                     else "scale x%d, %s" % (r["pixel_scale"], r["scale_method"]))
+        _out("%s  native %s (%s)  %d unique colours  value %d-%d  hue-shift %s deg  dither %s"
+             % (os.path.basename(r["path"]), r["native_size"], scale_note,
                 r["unique_colors"], r["value_range"][0], r["value_range"][1],
                 r["hue_shift_deg"], r["dither_density"]))
         _out("   outline: %s" % r["outline"])
+        edges = ", ".join("%ddeg %d%%" % (round(a), round(s * 100)) for a, s in r["edge_peaks"])
+        _out("   projection: %s  (edges: %s)" % (r["projection_guess"], edges or "none found"))
+        suffix = "" if r["scale_confident"] else " (unverified -- scale unknown)"
+        _out("   subject: %s at native scale -> canvas >= %s%s"
+             % (r["subject_size"], r["suggested_canvas"], suffix))
+        if not r["scale_confident"]:
+            _out("   note: no clean pixel grid found (smooth resample or JPEG) -- if this is "
+                 "an upscaled sprite, count the screen pixels across one art pixel on the "
+                 "contact sheet and re-run with --scale N")
         _out("   palette: %s" % " ".join(r["palette"]))
         for ramp in r["ramps"]:
             _out("     ramp: %s" % " -> ".join(ramp))
@@ -400,15 +433,35 @@ def cmd_anim(a):
                  % (s["name"], s["area"], s["bbox"], s["width"], s["height"], s["com"]))
     elif sub == "gif":
         out = a.out or os.path.splitext(a.file)[0] + ".gif"
-        _out(exportmod.gif(doc, out, scale=a.scale, fps=a.fps))
+        _warn_fps_override(doc, a.fps, a.force_fps)
+        _out(exportmod.gif(doc, out, scale=a.scale, fps=a.fps, force_fps=a.force_fps))
+
+
+def _warn_fps_override(doc, fps, force_fps):
+    """Print, and return, the note for a `--fps` that would silently discard a
+    varied `timing:` -- unless `--force-fps` says that is exactly the point."""
+    conflict = anim.timing_conflict(doc, fps)
+    if not conflict or force_fps:
+        return None
+    note = ("--fps %s overrides this sprite's per-frame timing (%s ms); "
+           "drop --fps to keep it" % (fps, _preview_list(conflict)))
+    _out("note: %s" % note)
+    return note
+
+
+def _preview_list(vals, n=3):
+    text = ",".join(str(v) for v in vals[:n])
+    return text + ",..." if len(vals) > n else text
 
 
 def cmd_export(a):
     doc = _doc(a.file)
     out_dir = a.out or os.path.join(os.path.dirname(os.path.abspath(a.file)), "out")
     scales = tuple(int(s) for s in a.scales.split(",") if s.strip())
+    _warn_fps_override(doc, a.fps, a.force_fps)
     written = exportmod.bundle(doc, out_dir, scales=scales, fps=a.fps,
-                               sheet=not a.no_sheet, make_gif=(None if not a.no_gif else False))
+                               sheet=not a.no_sheet, make_gif=(None if not a.no_gif else False),
+                               force_fps=a.force_fps)
     for p in written:
         _out(p)
 
@@ -470,6 +523,74 @@ def cmd_project(a):
     _out("  history/  stage snapshots (the studio timeline reads this)")
 
 
+def cmd_brief(a):
+    header, problems, notes = briefmod.validate(a.path)
+    if a.json:
+        out = {"ok": not problems, "problems": problems, "notes": notes, "header": header}
+        if not problems:
+            out["pipeline"] = briefmod.pipeline_for(header)
+        _out(json.dumps(out, indent=2))
+    elif problems:
+        _out("brief invalid -- %d problem(s):" % len(problems))
+        for p in problems:
+            _out("  - %s" % p)
+    else:
+        for k in briefmod.HEADER_KEYS:
+            _out("%s = %s" % (k, header.get(k, "")))
+        _out("brief ok -- pipeline: %s" % briefmod.pipeline_for(header))
+    if not a.json:
+        for n in notes:
+            _out("note: %s" % n)
+    if problems:
+        raise SystemExit(2)
+
+
+def cmd_scene(a):
+    sub = a.scene_cmd
+    if sub == "new":
+        text = scenemod.starter_text(a.name or os.path.splitext(os.path.basename(a.file))[0],
+                                     view=a.view, unit=a.unit, pitch=a.pitch, yaw=a.yaw)
+        d = os.path.dirname(os.path.abspath(a.file))
+        if d and not os.path.isdir(d):
+            os.makedirs(d)
+        with open(a.file, "w") as fh:
+            fh.write(text)
+        _out(a.file)
+        return
+    if sub == "render":
+        sc = scenemod.load(a.file)
+        result = scenemod.render(sc)
+        for w in result.warnings:
+            _out("warning: " + w)
+        out = a.out or os.path.splitext(a.file)[0] + ".pxa"
+        pxa.save(result.doc, out)
+        guide = a.guide or _sidecar(a.file, "guide")
+        img = scenemod.guide_image(result, scale=a.scale)
+        pxa.write_png(guide, img)
+        _out(out)
+        _out(guide)
+        _out(scenemod.faces_report(result))
+        _out("look at the guide before you paint")
+        return
+    if sub == "guide":
+        sc = scenemod.load(a.file)
+        result = scenemod.render(sc)
+        over = pxa.load(a.over) if a.over else None
+        img = scenemod.guide_image(result, scale=a.scale, over_doc=over)
+        out = a.out or _sidecar(a.file, "guide_over")
+        pxa.write_png(out, img)
+        _out(out)
+        return
+    if sub == "faces":
+        sc = scenemod.load(a.file)
+        result = scenemod.render(sc)
+        for w in result.warnings:
+            _out("warning: " + w)
+        _out(scenemod.faces_report(result))
+        return
+    raise SystemExit("unknown scene subcommand")
+
+
 def cmd_doctor(a):
     _out("python:  %s" % sys.version.split()[0])
     _out("pillow:  %s" % ("yes" if imaging.HAVE_PIL else "no (PNG-only reference intake)"))
@@ -486,18 +607,25 @@ def cmd_doctor(a):
         _out("  python3 -m pip install --user Pillow")
 
 
-BRIEF_TEMPLATE = """# %(name)s -- art direction brief
+BRIEF_TEMPLATE = """---
+class: character | structure | prop | scene       # pick one
+view: camera pitch=26.57 yaw=0    # tilt down / turn around Z, in degrees.
+                                  #   pitch 0 = side view, 26.57 = the RPG tilt,
+                                  #   90 = straight down; yaw 0 = front wall faces
+                                  #   you, 45 = isometric. Aliases: side, iso,
+                                  #   3/4-topdown k=0.5, oblique, custom axes=...
+canvas: 128x128                                    # never smaller than the reference subject at native scale
+palette: sweetie-16 | custom (NAME_palette.hex) | extracted N
+light: top-left
+outline: dark keyline | none | selective
+dither: none
+---
 
 ## Subject
-One sentence. What is it, seen from where, doing what.
+One sentence. What is it (%(name)s), seen from where, doing what.
 
 ## Read at 1x
 What must be identifiable when the sprite is 32 px tall and moving.
-
-## Canvas & palette
-- canvas:
-- palette (locked before drawing):
-- colour budget:
 
 ## Light
 - direction:
@@ -564,6 +692,7 @@ def build_parser():
     q.add_argument("--no-grid", action="store_true")
     q.add_argument("--lint", action="store_true", help="print top findings on the sheet")
     q.add_argument("--max-colors", type=int)
+    q.add_argument("--no-scene", action="store_true", help="skip the MASSING/FORM panels")
     q.set_defaults(func=cmd_view)
 
     q = sub.add_parser("strip", help="filmstrip of every frame")
@@ -589,6 +718,7 @@ def build_parser():
     q.add_argument("--verbose", action="store_true")
     q.add_argument("--strict", action="store_true")
     q.add_argument("--no-anim", action="store_true")
+    q.add_argument("--no-scene", action="store_true", help="skip the massing/structure checks")
     q.add_argument("--max-colors", type=int)
     q.set_defaults(func=cmd_lint)
 
@@ -653,6 +783,10 @@ def build_parser():
     q.add_argument("images", nargs="+")
     q.add_argument("--colors", type=int, default=16)
     q.add_argument("--out")
+    q.add_argument("--scale", type=int,
+                   help="override pixel-scale detection for every input image "
+                        "(use when the native grid was smoothed away by resampling "
+                        "and auto-detection reports 'no clean pixel grid found')")
     q.set_defaults(func=cmd_ref)
 
     q = sub.add_parser("import", help="raster image -> draft .pxa")
@@ -679,6 +813,33 @@ def build_parser():
     q.add_argument("--name")
     q.set_defaults(func=cmd_sheet)
 
+    q = sub.add_parser("scene", help="3D massing renderer for structures")
+    ss = q.add_subparsers(dest="scene_cmd")
+    r = ss.add_parser("new", help="write a starter .scene file")
+    r.add_argument("file")
+    r.add_argument("--view", default="topdown",
+                   choices=["topdown", "iso", "oblique", "custom", "camera"])
+    r.add_argument("--unit", type=float, default=6)
+    r.add_argument("--name")
+    r.add_argument("--pitch", type=float, default=26.57, help="view: camera only")
+    r.add_argument("--yaw", type=float, default=0.0, help="view: camera only")
+    r.set_defaults(func=cmd_scene)
+    r = ss.add_parser("render", help="render a .scene to .pxa + a wireframe guide PNG")
+    r.add_argument("file")
+    r.add_argument("--out")
+    r.add_argument("--guide")
+    r.add_argument("--scale", type=int, default=4)
+    r.set_defaults(func=cmd_scene)
+    r = ss.add_parser("guide", help="wireframe of the scene over a painted .pxa")
+    r.add_argument("file")
+    r.add_argument("--over", required=True)
+    r.add_argument("--out")
+    r.add_argument("--scale", type=int, default=4)
+    r.set_defaults(func=cmd_scene)
+    r = ss.add_parser("faces", help="print the face table (object, face, tone, bbox)")
+    r.add_argument("file")
+    r.set_defaults(func=cmd_scene)
+
     q = sub.add_parser("anim", help="animation")
     as_ = q.add_subparsers(dest="anim_cmd")
     r = as_.add_parser("add"); r.add_argument("file"); r.add_argument("name")
@@ -695,6 +856,9 @@ def build_parser():
     r = as_.add_parser("stats"); r.add_argument("file"); r.set_defaults(func=cmd_anim)
     r = as_.add_parser("gif"); r.add_argument("file"); r.add_argument("--out")
     r.add_argument("--scale", type=int, default=6); r.add_argument("--fps", type=int)
+    r.add_argument("--force-fps", action="store_true",
+                   help="take --fps even over a varied timing: (default: keep the timing "
+                        "and warn)")
     r.set_defaults(func=cmd_anim)
 
     q = sub.add_parser("export", help="game-ready bundle")
@@ -702,6 +866,9 @@ def build_parser():
     q.add_argument("--out")
     q.add_argument("--scales", default="1,2,4")
     q.add_argument("--fps", type=int)
+    q.add_argument("--force-fps", action="store_true",
+                   help="take --fps even over a varied timing: (default: keep the timing "
+                        "and warn)")
     q.add_argument("--no-sheet", action="store_true")
     q.add_argument("--no-gif", action="store_true")
     q.set_defaults(func=cmd_export)
@@ -727,6 +894,11 @@ def build_parser():
     q.add_argument("--name")
     q.set_defaults(func=cmd_project)
 
+    q = sub.add_parser("brief", help="validate a project's art-direction brief")
+    q.add_argument("path", help="a project directory or a brief.md file")
+    q.add_argument("--json", action="store_true")
+    q.set_defaults(func=cmd_brief)
+
     q = sub.add_parser("studio", help="live split-screen viewer")
     q.add_argument("--dir", default=".")
     q.add_argument("--port", type=int, default=8765)
@@ -748,6 +920,8 @@ def main(argv=None):
     try:
         a.func(a)
     except pxa.PxaError as exc:
+        raise SystemExit("error: %s" % exc)
+    except scenemod.SceneError as exc:
         raise SystemExit("error: %s" % exc)
     return 0
 

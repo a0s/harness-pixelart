@@ -10,6 +10,26 @@ placed by hand in the grid text.
 Also check: is there any hue shift at all in the ramps? Pure lighten/darken is
 the single biggest tell.
 
+## "The building is a flat front elevation"
+
+You drew it silhouette-first, or the brief has `view: side` for a subject the
+references show in 3/4 or isometric view. Buildings are pipeline B: declare the
+view in the brief (`px brief` will not pass without it), block the volumes out
+in a `.scene` file and `px scene render` it. The renderer owns the slopes, the
+face tones and the texture direction; you own everything after that. See
+`references/structures.md`. If the massing is right and it still looks flat,
+the eave and contact shadows are missing or the three face tones collapsed
+into one -- `px lint` reports `form-value` when that happens.
+
+## "The canvas is too small for the subject"
+
+`px ref` prints the subject size at the references' native scale and the
+minimum canvas that follows. A 64x64 sprite cannot hold a building that was
+180 px in the reference: the roof plane, the wall, the door and the texture
+have nowhere to go and collapse into blocks. Re-run `px brief` -- it compares
+the brief's canvas with `ref_study.json` and refuses a smaller one unless you
+write a `canvas-override:` line with a reason.
+
 ## "It reads as a blob at 1x"
 
 Look at the `VALUE` panel. Almost certainly the values are bunched. Push the

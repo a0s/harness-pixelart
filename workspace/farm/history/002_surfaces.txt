@@ -1,0 +1,1 @@
+shingle + straw tiles projected onto the faces; palette locked to 26 colours sampled from the reference

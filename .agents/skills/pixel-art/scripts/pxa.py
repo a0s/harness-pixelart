@@ -18,15 +18,17 @@ TRANSPARENT_KEY = "."
 DEFAULT_FRAME = "main"
 
 # Character alphabet offered to callers that need to allocate new palette keys.
-# '.' is reserved for transparency; visually confusable pairs are kept but
-# ordered so the most legible characters get handed out first.
-KEY_ALPHABET = "KWRGBYOPCMNVIDEFHJLSTUXZ" + "abcdefghijklmnopqrstuvwxyz" + "0123456789" + "+*#%$&@=~"
+# '.' is reserved for transparency and '#' is reserved for comments (a swatch
+# keyed '#' would write a palette line that reads back as a comment, silently
+# losing the colour). Visually confusable pairs are kept but ordered so the most
+# legible characters get handed out first.
+KEY_ALPHABET = "KWRGBYOPCMNVIDEFHJLSTUXZ" + "abcdefghijklmnopqrstuvwxyz" + "0123456789" + "+*%$&@=~"
 
 # Keys ordered from visually heaviest to lightest. When the palette is assigned
 # in luminance order from this alphabet, the raw grid text reads as a rough
 # ASCII picture of the sprite -- which is the whole point of a text format:
 # the model can see the drawing without rendering it.
-DENSITY_KEYS = "@#%$&8BMWNHKREXSAouc=+-:;'`"
+DENSITY_KEYS = "@%$&8BMWNHKREXSAouc=+-:;'`"
 
 
 class PxaError(Exception):
@@ -287,6 +289,7 @@ class Doc(object):
 # --------------------------------------------------------------------------
 
 _SECTION_RE = re.compile(r"^@(meta|palette|frame|grid)\b\s*(.*)$")
+_PALETTE_HASH_KEY_RE = re.compile(r"^#\s+#[0-9a-fA-F]{3,8}\b")
 
 
 def parse(text):
@@ -325,8 +328,14 @@ def parse(text):
                 continue
             frame_rows.append(stripped)
             continue
-        if not stripped or stripped.startswith("#"):
+        if not stripped:
             continue
+        if stripped.startswith("#"):
+            # A palette line whose key is '#' looks exactly like a comment.
+            # Files written before '#' was banned as a key still parse: inside
+            # @palette, treat "# #rrggbb name" as the swatch it was meant to be.
+            if not (section == "palette" and _PALETTE_HASH_KEY_RE.match(stripped)):
+                continue
         if section == "meta":
             if ":" not in stripped:
                 raise PxaError("bad @meta line (expected 'key: value'): %r" % stripped)
